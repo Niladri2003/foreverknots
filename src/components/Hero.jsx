@@ -35,13 +35,13 @@ export default function Hero() {
 
         <div className="collage reveal" data-delay="2">
           <div className="collage__tile collage__tile--main">
-            <img src="/photos/p15.jpg" alt="Couple on heritage staircase" loading="eager" />
+            <img src="https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto/foreverknots/p15.jpg" alt="Couple on heritage staircase" loading="eager" />
           </div>
           <div className="collage__tile collage__tile--tr">
-            <img src="/photos/p18.jpg" alt="Bengali bride" loading="eager" />
+            <img src="https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto/foreverknots/p18.jpg" alt="Bengali bride" loading="eager" />
           </div>
           <div className="collage__tile collage__tile--br">
-            <img src="/photos/p05.jpg" alt="Couple running near Howrah Bridge" loading="eager" />
+            <img src="https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto/foreverknots/p05.jpg" alt="Couple running near Howrah Bridge" loading="eager" />
           </div>
           <div className="collage__stamp">
             tying knots since

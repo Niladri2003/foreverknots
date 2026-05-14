@@ -18,7 +18,7 @@ export default function About() {
 
         <div className="about-grid">
           <div className="about__media reveal" data-delay="1">
-            <img src="/photos/p25.jpg" alt="The photographer at work" />
+            <img src="https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto/foreverknots/p25.jpg" alt="The photographer at work" />
           </div>
           <div className="about__body reveal" data-delay="2">
             <p>
