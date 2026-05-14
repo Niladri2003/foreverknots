@@ -1,0 +1,44 @@
+import { INFO } from '../data';
+
+export default function Foot({ onJump }) {
+  return (
+    <footer className="foot">
+      <div className="wrap">
+        <div className="foot__top">
+          <div>
+            <div className="foot__brand">
+              forever<em>knots</em>
+            </div>
+            <p className="foot__tagline">
+              A wedding-photography studio out of Kolkata. Documentary, slow,
+              and printed on paper. Tying knots since 2020.
+            </p>
+          </div>
+          <div className="foot__col">
+            <h5>Studio</h5>
+            <ul>
+              <li onClick={() => onJump('work')}>Work</li>
+              <li onClick={() => onJump('stories')}>Stories</li>
+              <li onClick={() => onJump('about')}>About</li>
+              <li onClick={() => onJump('voices')}>Voices</li>
+              <li onClick={() => onJump('contact')}>Inquire</li>
+            </ul>
+          </div>
+          <div className="foot__col">
+            <h5>Elsewhere</h5>
+            <ul>
+              <li><a href={INFO.instagram} target="_blank" rel="noopener noreferrer">Instagram {INFO.instagramHandle}</a></li>
+              <li>Facebook · foreverknots</li>
+              <li>{INFO.email}</li>
+              <li>{INFO.phone}</li>
+            </ul>
+          </div>
+        </div>
+        <div className="foot__bot">
+          <span>© foreverknots · MMXXVI · Kolkata</span>
+          <span>Made with care</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
