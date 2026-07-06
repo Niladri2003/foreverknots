@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { MotionConfig, LazyMotion, domMax, AnimatePresence } from 'motion/react';
 import { ReactLenis, useLenis } from 'lenis/react';
+import { Routes, Route, Outlet, Navigate, useLocation, useNavigate, useMatch } from 'react-router-dom';
 import { STORIES } from './data';
 import Seo from './components/Seo';
 import Nav from './components/Nav';
@@ -20,10 +21,33 @@ import Foot from './components/Foot';
 import Lightbox from './components/Lightbox';
 import Preloader from './components/Preloader';
 import WhatsAppFloat from './components/WhatsAppFloat';
+import GalleryPage from './pages/GalleryPage';
 import { usePrefersReducedMotion } from './hooks/usePrefersReducedMotion';
+
+function HomePage({ ready, openLightbox, openStory, jump }) {
+  return (
+    <main>
+      <Hero ready={ready} />
+      <Marquee />
+      <Intro />
+      <Work openLightbox={openLightbox} />
+      <Stories openStory={openStory} />
+      <Packages onJump={jump} />
+      <About />
+      <Voices />
+      <Faq />
+      <InstaStrip />
+      <Contact />
+      {/* /stories/:id nests here so the homepage never remounts under the overlay */}
+      <Outlet />
+    </main>
+  );
+}
 
 function Site({ reduced }) {
   const lenis = useLenis();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const [booted, setBooted] = useState(() => {
     try { return !!sessionStorage.getItem('fk-seen'); } catch { return true; }
@@ -37,29 +61,19 @@ function Site({ reduced }) {
   const prev = useCallback(() => setLb((s) => ({ ...s, index: (s.index - 1 + s.items.length) % s.items.length, dir: -1 })), []);
   const next = useCallback(() => setLb((s) => ({ ...s, index: (s.index + 1) % s.items.length, dir: 1 })), []);
 
-  const [story, setStory] = useState(null);
-  const openStory = useCallback((s) => {
-    setStory(s);
-    window.history.pushState(null, '', `#story=${s.id}`);
-  }, []);
-  const closeStory = useCallback(() => {
-    setStory(null);
-    if (window.location.hash.startsWith('#story=')) {
-      window.history.pushState(null, '', window.location.pathname + window.location.search);
-    }
-  }, []);
+  // Story overlay is route-driven: /stories/:id
+  const storyMatch = useMatch('/stories/:id');
+  const story = storyMatch ? STORIES.find((s) => s.id === storyMatch.params.id) || null : null;
+  const openStory = useCallback((s) => navigate(`/stories/${s.id}`), [navigate]);
+  const closeStory = useCallback(() => navigate('/'), [navigate]);
 
-  // Shareable story URLs: open on direct load, sync with back/forward
+  // Scroll to top when switching between the home page and the gallery page
+  const page = location.pathname.startsWith('/gallery') ? 'gallery' : 'home';
   useEffect(() => {
-    const applyHash = () => {
-      const match = window.location.hash.match(/^#story=(.+)$/);
-      const s = match && STORIES.find((x) => x.id === match[1]);
-      setStory(s || null);
-    };
-    applyHash();
-    window.addEventListener('popstate', applyHash);
-    return () => window.removeEventListener('popstate', applyHash);
-  }, []);
+    if (lenis) lenis.scrollTo(0, { immediate: true });
+    else window.scrollTo(0, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
 
   const scrollToId = useCallback((id) => {
     const el = document.getElementById(id);
@@ -75,8 +89,13 @@ function Site({ reduced }) {
       setTimeout(() => scrollToId(id), 550);
       return;
     }
+    if (page === 'gallery') {
+      navigate('/');
+      setTimeout(() => scrollToId(id), 400);
+      return;
+    }
     scrollToId(id);
-  }, [story, closeStory, scrollToId]);
+  }, [story, page, closeStory, navigate, scrollToId]);
 
   return (
     <>
@@ -85,19 +104,16 @@ function Site({ reduced }) {
       </AnimatePresence>
 
       <Nav onJump={jump} />
-      <main>
-        <Hero ready={ready} />
-        <Marquee />
-        <Intro />
-        <Work openLightbox={openLightbox} />
-        <Stories openStory={openStory} />
-        <Packages onJump={jump} />
-        <About />
-        <Voices />
-        <Faq />
-        <InstaStrip />
-        <Contact />
-      </main>
+
+      <Routes>
+        <Route path="/" element={<HomePage ready={ready} openLightbox={openLightbox} openStory={openStory} jump={jump} />}>
+          <Route index element={null} />
+          <Route path="stories/:id" element={null} />
+        </Route>
+        <Route path="/gallery" element={<GalleryPage openLightbox={openLightbox} />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+
       <Foot onJump={jump} />
 
       <WhatsAppFloat />

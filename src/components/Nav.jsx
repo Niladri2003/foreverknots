@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { m, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useScrollSection } from '../hooks/useScrollSection';
 import { useBodyLock } from '../hooks/useBodyLock';
 import { useFocusTrap } from '../hooks/useFocusTrap';
@@ -8,17 +9,18 @@ import { INFO } from '../data';
 import { waLink } from '../utils/whatsapp';
 
 const NAV_ITEMS = [
-  ['work', 'Work'],
-  ['stories', 'Stories'],
-  ['packages', 'Investment'],
-  ['about', 'Story'],
-  ['voices', 'Voices'],
-  ['contact', 'Contact'],
+  { type: 'section', id: 'work', label: 'Work' },
+  { type: 'section', id: 'stories', label: 'Stories' },
+  { type: 'route', to: '/gallery', label: 'Gallery' },
+  { type: 'section', id: 'packages', label: 'Investment' },
+  { type: 'section', id: 'about', label: 'Story' },
+  { type: 'section', id: 'voices', label: 'Voices' },
+  { type: 'section', id: 'contact', label: 'Contact' },
 ];
 
 /* Separate component so AnimatePresence's direct child carries no ref —
  * motion reads the child's ref prop internally, which React 18 warns on. */
-function MobileOverlay({ jump, onClose }) {
+function MobileOverlay({ go, onClose }) {
   const ref = useRef(null);
   useFocusTrap(ref, true);
 
@@ -43,21 +45,21 @@ function MobileOverlay({ jump, onClose }) {
         animate="show"
         variants={{ show: { transition: { staggerChildren: 0.06, delayChildren: 0.25 } } }}
       >
-        {NAV_ITEMS.map(([id, label], i) => (
-          <div className="mask" key={id}>
+        {NAV_ITEMS.map((item, i) => (
+          <div className="mask" key={item.label}>
             <m.button
               variants={{ hidden: { y: '110%' }, show: { y: 0, transition: { duration: 0.7, ease: LUXE } } }}
-              onClick={() => jump(id)}
+              onClick={() => go(item)}
             >
               <span className="idx">0{i + 1}</span>
-              {label}
+              {item.label}
             </m.button>
           </div>
         ))}
         <div className="mask">
           <m.button
             variants={{ hidden: { y: '110%' }, show: { y: 0, transition: { duration: 0.7, ease: LUXE } } }}
-            onClick={() => jump('contact')}
+            onClick={() => go({ type: 'section', id: 'contact' })}
           >
             <em>Inquire →</em>
           </m.button>
@@ -79,9 +81,12 @@ function MobileOverlay({ jump, onClose }) {
 
 export default function Nav({ onJump }) {
   const { scrolled, section } = useScrollSection();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
   const [mobile, setMobile] = useState(false);
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
+  const onHome = !pathname.startsWith('/gallery');
 
   useMotionValueEvent(scrollY, 'change', (y) => {
     const prev = scrollY.getPrevious() ?? 0;
@@ -90,7 +95,15 @@ export default function Nav({ onJump }) {
   });
 
   useBodyLock(mobile);
-  const jump = (id) => { onJump(id); setMobile(false); };
+
+  const go = (item) => {
+    if (item.type === 'route') navigate(item.to);
+    else onJump(item.id);
+    setMobile(false);
+  };
+
+  const isActive = (item) =>
+    item.type === 'route' ? pathname.startsWith(item.to) : onHome && section === item.id;
 
   return (
     <>
@@ -101,17 +114,17 @@ export default function Nav({ onJump }) {
         transition={{ duration: 0.45, ease: EASE }}
         initial={false}
       >
-        <div className="nav__brand" onClick={() => jump('home')}>
+        <div className="nav__brand" onClick={() => go({ type: 'section', id: 'home' })}>
           forever<em>knots</em>
         </div>
         <div className="nav__links">
-          {NAV_ITEMS.map(([id, label]) => (
-            <button key={id} onClick={() => jump(id)} className={section === id ? 'active' : ''}>
-              {label}
+          {NAV_ITEMS.map((item) => (
+            <button key={item.label} onClick={() => go(item)} className={isActive(item) ? 'active' : ''}>
+              {item.label}
             </button>
           ))}
         </div>
-        <button className="nav__cta" onClick={() => jump('contact')}>
+        <button className="nav__cta" onClick={() => go({ type: 'section', id: 'contact' })}>
           <span>Inquire</span> <span aria-hidden="true">→</span>
         </button>
         <button className="nav__menubtn" onClick={() => setMobile(true)} aria-label="Open menu">
@@ -121,7 +134,7 @@ export default function Nav({ onJump }) {
       </m.nav>
 
       <AnimatePresence>
-        {mobile && <MobileOverlay jump={jump} onClose={() => setMobile(false)} />}
+        {mobile && <MobileOverlay go={go} onClose={() => setMobile(false)} />}
       </AnimatePresence>
     </>
   );

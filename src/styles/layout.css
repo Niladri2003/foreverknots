@@ -298,6 +298,22 @@
 
 .loadmore { display: flex; justify-content: center; margin-top: var(--sp-5); }
 
+/* GALLERY PAGE */
+.gallery-page .section { padding-top: calc(96px + var(--sp-6)); }
+.gallery-page__head { margin-bottom: var(--sp-5); max-width: 980px; }
+.gallery-page__title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(56px, 9vw, 150px);
+  line-height: 0.95;
+  letter-spacing: -0.018em;
+  margin: 18px 0 0;
+  color: var(--ink);
+}
+.gallery-page__title em { font-style: italic; color: var(--accent-warm); font-weight: 400; }
+.gallery-page__lead { margin: 24px 0 0; }
+.gallery-page__filters { margin-bottom: var(--sp-5); }
+
 /* "View →" label trailing the cursor over the work grid */
 .cursor-label {
   position: fixed; top: 0; left: 0;

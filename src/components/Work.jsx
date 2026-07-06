@@ -1,39 +1,13 @@
-import { useState, useMemo, useRef } from 'react';
-import { m, AnimatePresence, useMotionValue, useSpring } from 'motion/react';
-import { PHOTOS, FILTERS } from '../data';
-import CloudImage from './CloudImage';
+import { useNavigate } from 'react-router-dom';
+import { PHOTOS } from '../data';
+import PhotoGrid from './PhotoGrid';
 import Reveal from './Reveal';
-import { EASE } from '../utils/motion';
 
-/* Mosaic slot per index — crop ratios matching .tile--v* so Cloudinary
- * serves pre-cropped, face-aware thumbnails. */
-const PATTERN_AR = ['4:3', '4:5', '3:4', '3:4', '3:4', '4:5', '4:5', '21:9'];
-const TILE_SIZES = '(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 45vw';
+/* Curated homepage selection — the full, filterable archive lives at /gallery */
+const CURATED = PHOTOS.slice(0, 8);
 
 export default function Work({ openLightbox }) {
-  const [filter, setFilter] = useState('all');
-  const [showAll, setShowAll] = useState(false);
-
-  // "View →" label following the cursor over the grid — pointer devices only
-  const [labelOn, setLabelOn] = useState(false);
-  const fine = useRef(
-    typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches,
-  );
-  const cx = useMotionValue(0);
-  const cy = useMotionValue(0);
-  const sx = useSpring(cx, { stiffness: 500, damping: 45 });
-  const sy = useSpring(cy, { stiffness: 500, damping: 45 });
-
-  const filtered = useMemo(
-    () => PHOTOS.filter((p) => filter === 'all' || p.cat === filter),
-    [filter],
-  );
-  const visible = showAll ? filtered : filtered.slice(0, 8);
-
-  const open = (p) => {
-    const items = filtered.map((x) => ({ name: x.id, title: x.title, place: x.place, year: x.year }));
-    openLightbox(items, filtered.indexOf(p));
-  };
+  const navigate = useNavigate();
 
   return (
     <section id="work" className="section">
@@ -45,79 +19,19 @@ export default function Work({ openLightbox }) {
               The <em>archive</em>
             </h2>
           </Reveal>
-          <Reveal className="filters" delay={0.1}>
-            {FILTERS.map((f) => (
-              <button
-                key={f.id}
-                className={filter === f.id ? 'active' : ''}
-                onClick={() => { setFilter(f.id); setShowAll(false); }}
-              >
-                {f.label}
-              </button>
-            ))}
+          <Reveal as="p" className="sec-head__lead" delay={0.1}>
+            Eight frames we keep coming back to. The full archive — every
+            pre-wedding, ritual, portrait and detail — lives in the gallery.
           </Reveal>
         </div>
 
-        <div
-          className="grid"
-          onMouseMove={(e) => { cx.set(e.clientX); cy.set(e.clientY); }}
-          onMouseEnter={() => setLabelOn(true)}
-          onMouseLeave={() => setLabelOn(false)}
-        >
-          <AnimatePresence mode="popLayout" initial={false}>
-            {visible.map((p, i) => (
-              <m.div
-                layout
-                key={p.id}
-                className={`tile tile--v${(i % 8) + 1} ${p.aspect === 'portrait' ? 'is-portrait' : ''}`}
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{
-                  layout: { duration: 0.5, ease: EASE },
-                  opacity: { duration: 0.5, ease: EASE, delay: Math.min(i * 0.04, 0.35) },
-                  y: { duration: 0.5, ease: EASE, delay: Math.min(i * 0.04, 0.35) },
-                  scale: { duration: 0.25, ease: 'easeIn' },
-                }}
-                onClick={() => open(p)}
-              >
-                <CloudImage
-                  name={p.id}
-                  alt={p.title}
-                  sizes={TILE_SIZES}
-                  fill
-                  ar={PATTERN_AR[i % 8]}
-                />
-                <div className="tile__overlay">
-                  <div className="tile__title">{p.title}</div>
-                  <div className="tile__meta">
-                    {p.place} <span className="dot-sep" /> {p.year}
-                  </div>
-                </div>
-              </m.div>
-            ))}
-          </AnimatePresence>
+        <PhotoGrid photos={CURATED} lightboxPhotos={PHOTOS} openLightbox={openLightbox} />
+
+        <div className="loadmore">
+          <button className="btn btn--ghost" onClick={() => navigate('/gallery')}>
+            View the full archive · {PHOTOS.length} frames <span className="ar">→</span>
+          </button>
         </div>
-
-        {fine.current && (
-          <m.div
-            className="cursor-label"
-            style={{ x: sx, y: sy }}
-            animate={{ opacity: labelOn ? 1 : 0, scale: labelOn ? 1 : 0.8 }}
-            transition={{ duration: 0.25, ease: EASE }}
-            aria-hidden="true"
-          >
-            <span>View →</span>
-          </m.div>
-        )}
-
-        {filtered.length > 8 && !showAll && (
-          <div className="loadmore">
-            <button className="btn btn--ghost" onClick={() => setShowAll(true)}>
-              View {filtered.length - 8} more <span className="ar">→</span>
-            </button>
-          </div>
-        )}
       </div>
     </section>
   );

@@ -1,7 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import { INFO } from '../data';
 import { waLink } from '../utils/whatsapp';
 
 export default function Foot({ onJump }) {
+  const navigate = useNavigate();
   return (
     <footer className="foot">
       <div className="wrap">
@@ -20,6 +22,7 @@ export default function Foot({ onJump }) {
             <ul>
               <li onClick={() => onJump('work')}>Work</li>
               <li onClick={() => onJump('stories')}>Stories</li>
+              <li onClick={() => navigate('/gallery')}>Gallery</li>
               <li onClick={() => onJump('packages')}>Investment</li>
               <li onClick={() => onJump('about')}>About</li>
               <li onClick={() => onJump('faq')}>FAQ</li>
