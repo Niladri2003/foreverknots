@@ -1,0 +1,71 @@
+/* foreverknots — design tokens
+ * Default: cinematic dark luxe. A darkened cinema hall for photographs —
+ * near-black canvas, candle-gold accents, cream serif type.
+ */
+
+:root {
+  --bg:        #0E0C09;
+  --bg-paper:  #16130E;
+  --bg-deep:   #080706;
+  --ink:       #F0E7D4;
+  --ink-soft:  #C9BCA6;
+  --ink-mute:  #9A8B76;
+  --rule:      #2B2317;
+  --rule-gold: rgba(212, 158, 98, 0.28);
+  --accent:      #D4995D;
+  --accent-warm: #E6C08C;
+  --error:       #E06C4B;
+
+  --scrim: linear-gradient(180deg, rgba(8,7,6,.2) 0%, rgba(8,7,6,.34) 55%, rgba(8,7,6,.82) 100%);
+  --glow: 0 24px 80px -16px rgba(0,0,0,.75), 0 0 90px -30px rgba(212,153,93,.12);
+
+  --gutter: clamp(20px, 4.5vw, 72px);
+  --sp-5: 64px; --sp-6: 96px; --sp-7: 144px;
+
+  --z-nav: 50; --z-wa: 55; --z-mnav: 60; --z-story: 90;
+  --z-lightbox: 110; --z-preloader: 150; --z-grain: 200;
+
+  --serif: "Cormorant Garamond", "EB Garamond", Georgia, serif;
+  --sans:  "DM Sans", "Helvetica Neue", Arial, sans-serif;
+  --monof: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+
+/* Former light default, preserved as an optional palette (unwired). */
+:root[data-palette="paper"] {
+  --bg:       #F4EDE0;
+  --bg-paper: #FAF5EA;
+  --bg-deep:  #E8DDC8;
+  --ink:      #1A1612;
+  --ink-soft: #4A4239;
+  --ink-mute: #8A7E6E;
+  --rule:     #D9CBB2;
+  --rule-gold: rgba(140, 59, 34, 0.25);
+  --accent:      #8C3B22;
+  --accent-warm: #C7855C;
+}
+
+:root[data-palette="ivory"] {
+  --bg:       #EDE6D8;
+  --bg-paper: #F5EFE2;
+  --bg-deep:  #DDD3BD;
+  --ink:      #1A1612;
+  --ink-soft: #4A4239;
+  --ink-mute: #8A7E6E;
+  --rule:     #C8B999;
+  --rule-gold: rgba(107, 68, 35, 0.25);
+  --accent:      #6B4423;
+  --accent-warm: #B8845F;
+}
+
+:root[data-palette="rose"] {
+  --bg:       #F4E8E0;
+  --bg-paper: #FAEFE7;
+  --bg-deep:  #E8D5C5;
+  --ink:      #2A1812;
+  --ink-soft: #5A3E33;
+  --ink-mute: #9E7E70;
+  --rule:     #D9B9A1;
+  --rule-gold: rgba(161, 68, 48, 0.25);
+  --accent:      #A14430;
+  --accent-warm: #CA8266;
+}

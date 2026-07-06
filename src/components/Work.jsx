@@ -1,5 +1,14 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
+import { m, AnimatePresence } from 'motion/react';
 import { PHOTOS, FILTERS } from '../data';
+import CloudImage from './CloudImage';
+import Reveal from './Reveal';
+import { EASE } from '../utils/motion';
+
+/* Mosaic slot per index — crop ratios matching .tile--v* so Cloudinary
+ * serves pre-cropped, face-aware thumbnails. */
+const PATTERN_AR = ['4:3', '4:5', '3:4', '3:4', '3:4', '4:5', '4:5', '21:9'];
+const TILE_SIZES = '(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 45vw';
 
 export default function Work({ openLightbox }) {
   const [filter, setFilter] = useState('all');
@@ -11,24 +20,22 @@ export default function Work({ openLightbox }) {
   );
   const visible = showAll ? filtered : filtered.slice(0, 8);
 
-  useEffect(() => {
-    const t = setTimeout(() => {
-      document.querySelectorAll('#work .tile.reveal').forEach((el) => el.classList.add('in'));
-    }, 30);
-    return () => clearTimeout(t);
-  }, [filter, showAll]);
+  const open = (p) => {
+    const items = filtered.map((x) => ({ name: x.id, title: x.title, place: x.place, year: x.year }));
+    openLightbox(items, filtered.indexOf(p));
+  };
 
   return (
     <section id="work" className="section">
       <div className="wrap">
         <div className="work__head">
-          <div className="reveal">
+          <Reveal>
             <div className="mono">Selected work · 2023 – 2026</div>
             <h2 className="sec-head__title" style={{ marginTop: 12 }}>
               The <em>archive</em>
             </h2>
-          </div>
-          <div className="filters reveal" data-delay="1">
+          </Reveal>
+          <Reveal className="filters" delay={0.1}>
             {FILTERS.map((f) => (
               <button
                 key={f.id}
@@ -38,26 +45,43 @@ export default function Work({ openLightbox }) {
                 {f.label}
               </button>
             ))}
-          </div>
+          </Reveal>
         </div>
 
         <div className="grid">
-          {visible.map((p, i) => (
-            <div
-              key={p.src}
-              className="tile reveal"
-              data-delay={(i % 4) + 1}
-              onClick={() => openLightbox(filtered, filtered.indexOf(p))}
-            >
-              <img src={p.src} alt={p.title} loading="lazy" />
-              <div className="tile__overlay">
-                <div className="tile__title">{p.title}</div>
-                <div className="tile__meta">
-                  {p.place} <span className="dot-sep" /> {p.year}
+          <AnimatePresence mode="popLayout" initial={false}>
+            {visible.map((p, i) => (
+              <m.div
+                layout
+                key={p.id}
+                className={`tile tile--v${(i % 8) + 1} ${p.aspect === 'portrait' ? 'is-portrait' : ''}`}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{
+                  layout: { duration: 0.5, ease: EASE },
+                  opacity: { duration: 0.5, ease: EASE, delay: Math.min(i * 0.04, 0.35) },
+                  y: { duration: 0.5, ease: EASE, delay: Math.min(i * 0.04, 0.35) },
+                  scale: { duration: 0.25, ease: 'easeIn' },
+                }}
+                onClick={() => open(p)}
+              >
+                <CloudImage
+                  name={p.id}
+                  alt={p.title}
+                  sizes={TILE_SIZES}
+                  fill
+                  ar={PATTERN_AR[i % 8]}
+                />
+                <div className="tile__overlay">
+                  <div className="tile__title">{p.title}</div>
+                  <div className="tile__meta">
+                    {p.place} <span className="dot-sep" /> {p.year}
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              </m.div>
+            ))}
+          </AnimatePresence>
         </div>
 
         {filtered.length > 8 && !showAll && (

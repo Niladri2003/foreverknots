@@ -1,0 +1,105 @@
+/* Full-screen overlays: lightbox, story modal */
+
+/* LIGHTBOX */
+.lightbox {
+  position: fixed; inset: 0;
+  z-index: var(--z-lightbox);
+  background: rgba(8, 7, 6, 0.97);
+  display: flex; align-items: center; justify-content: center;
+  padding: 60px;
+}
+@media (max-width: 768px) { .lightbox { padding: 16px; } }
+.lightbox__close {
+  position: absolute; top: 24px; right: 32px; z-index: 3;
+  background: none; border: 0; color: var(--ink); cursor: pointer;
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.lightbox__counter {
+  position: absolute; top: 28px; left: 32px; z-index: 3;
+  color: var(--ink-mute);
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  font-family: var(--monof);
+}
+.lightbox__stage { position: relative; width: min(90vw, 1280px); height: min(80vh, 100%); }
+.lightbox__frame {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  margin: 0;
+}
+.lightbox__frame img {
+  max-width: 100%; max-height: calc(100% - 72px);
+  object-fit: contain;
+  box-shadow: 0 24px 60px rgba(0,0,0,.5);
+  user-select: none; -webkit-user-drag: none;
+}
+.lightbox__caption { text-align: center; margin-top: 18px; color: var(--ink); }
+.lightbox__caption .t { font-family: var(--serif); font-style: italic; font-size: 24px; margin-bottom: 4px; }
+.lightbox__caption .s { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-mute); }
+.lightbox__arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
+  background: none; border: 1px solid var(--rule-gold); color: var(--ink);
+  width: 52px; height: 52px; border-radius: 50%;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  transition: background .2s ease, border-color .2s ease, color .2s ease;
+  font-family: inherit;
+}
+.lightbox__arrow:hover { background: var(--accent); border-color: var(--accent); color: var(--bg-deep); }
+.lightbox__arrow.prev { left: 24px; }
+.lightbox__arrow.next { right: 24px; }
+@media (max-width: 768px) { .lightbox__arrow { display: none; } }
+
+/* STORY MODAL — transformed fixed wrapper + inner scroller, so the close
+ * button stays put while the panel scrolls */
+.story-modal-root { position: fixed; inset: 0; z-index: var(--z-story); }
+.story-modal {
+  position: absolute; inset: 0;
+  background: var(--bg);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.story-modal__hero > div { height: 100%; }
+.story-modal__close {
+  position: absolute; top: 20px; right: var(--gutter); z-index: 100;
+  background: var(--ink); color: var(--bg);
+  border: 0; border-radius: 999px; padding: 12px 22px;
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.story-modal__close:hover { background: var(--accent); color: var(--bg-deep); }
+.story-modal__hero { position: relative; height: 80vh; overflow: hidden; background: var(--bg-deep); }
+.story-modal__hero img { width: 100%; height: 112%; object-fit: cover; will-change: transform; }
+.story-modal__hero-text { position: absolute; left: var(--gutter); right: var(--gutter); bottom: clamp(40px, 6vw, 80px); z-index: 2; color: var(--ink); }
+.story-modal__hero-text .mono { color: color-mix(in oklab, var(--ink) 70%, transparent); margin-bottom: 16px; display: block; }
+.story-modal__hero-text h2 { font-family: var(--serif); font-size: clamp(48px, 8vw, 128px); line-height: 0.95; margin: 0; font-weight: 400; letter-spacing: -0.022em; }
+.story-modal__hero-text h2 em { font-style: italic; color: var(--accent-warm); }
+.story-modal__hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,7,6,0) 30%, rgba(8,7,6,0.72) 100%); pointer-events: none; }
+.story-modal__body { padding: var(--sp-6) 0; }
+.story-modal__intro { display: grid; grid-template-columns: 4fr 8fr; gap: clamp(32px, 5vw, 80px); padding: 0 var(--gutter); max-width: 1440px; margin: 0 auto; }
+@media (max-width: 768px) { .story-modal__intro { grid-template-columns: 1fr; } }
+.story-modal__facts dl { margin: 0; display: grid; gap: 14px; }
+.story-modal__facts .row { display: grid; grid-template-columns: 100px 1fr; gap: 16px; align-items: baseline; padding-top: 14px; border-top: 1px solid var(--rule); }
+.story-modal__facts .row dt { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-mute); }
+.story-modal__facts .row dd { margin: 0; font-family: var(--serif); font-size: 22px; font-style: italic; color: var(--ink); }
+.story-modal__narrative p { font-size: clamp(16px, 1.3vw, 18px); line-height: 1.7; color: var(--ink-soft); margin: 0 0 1.2em; max-width: 56ch; }
+.story-modal__narrative p:first-of-type:first-letter {
+  font-family: var(--serif); font-style: italic; font-size: 4em; line-height: 0.9;
+  color: var(--accent); float: left; padding: 4px 12px 0 0;
+}
+.story-modal__gallery { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(12px, 1.6vw, 22px); padding: 0 var(--gutter); max-width: 1440px; margin: var(--sp-6) auto 0; }
+.story-modal__gallery > div { overflow: hidden; background: var(--bg-paper); cursor: pointer; }
+.story-modal__gallery > div img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(.2,.6,.2,1); }
+.story-modal__gallery > div:hover img { transform: scale(1.04); }
+.story-modal__gallery .g-v1 { grid-column: span 7;  aspect-ratio: 4/3; }
+.story-modal__gallery .g-v2 { grid-column: span 5;  aspect-ratio: 4/5; }
+.story-modal__gallery .g-v3 { grid-column: span 6;  aspect-ratio: 4/5; }
+.story-modal__gallery .g-v4 { grid-column: span 6;  aspect-ratio: 4/5; }
+.story-modal__gallery .g-v5 { grid-column: span 12; aspect-ratio: 21/9; }
+@media (max-width: 768px) {
+  .story-modal__gallery .g-v1, .story-modal__gallery .g-v2, .story-modal__gallery .g-v3,
+  .story-modal__gallery .g-v4, .story-modal__gallery .g-v5 { grid-column: span 12; aspect-ratio: 4/3; }
+}
+.story-modal__end { text-align: center; margin-top: var(--sp-6); }
