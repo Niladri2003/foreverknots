@@ -44,10 +44,7 @@
   white-space: nowrap;
 }
 .pkg__name { font-family: var(--serif); font-style: italic; font-size: clamp(28px, 2.6vw, 36px); margin: 0; color: var(--ink); }
-.pkg__price-row { display: flex; align-items: baseline; gap: 12px; margin-top: 18px; }
-.pkg__price { font-family: var(--serif); font-size: clamp(34px, 3vw, 46px); line-height: 1; color: var(--accent-warm); letter-spacing: -0.01em; }
-.pkg__price-note { font-family: var(--monof); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-mute); }
-.pkg__blurb { font-size: 14px; line-height: 1.6; color: var(--ink-soft); margin: 12px 0 0; }
+.pkg__blurb { font-size: 14px; line-height: 1.6; color: var(--ink-soft); margin: 14px 0 0; }
 .pkg__features { list-style: none; padding: 20px 0 0; margin: 20px 0 0; border-top: 1px solid var(--rule); display: grid; gap: 12px; }
 .pkg__features li { font-size: 14px; line-height: 1.55; color: var(--ink-soft); padding-left: 22px; position: relative; }
 .pkg__features li::before { content: "—"; position: absolute; left: 0; color: var(--accent); }

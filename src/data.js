@@ -130,8 +130,6 @@ export const PACKAGES = [
   {
     id: "intimate",
     name: "The Intimate",
-    price: "₹45,000",
-    priceNote: "starting at",
     blurb: "For registry days, small ceremonies and single events.",
     features: [
       "One event · up to 6 hours",
@@ -145,8 +143,6 @@ export const PACKAGES = [
   {
     id: "signature",
     name: "The Signature",
-    price: "₹95,000",
-    priceNote: "starting at",
     blurb: "Two days of the wedding, told end to end.",
     features: [
       "Haldi / mehendi + wedding day · 2 days",
@@ -161,8 +157,6 @@ export const PACKAGES = [
   {
     id: "grand",
     name: "The Grand",
-    price: "₹1,75,000",
-    priceNote: "from",
     blurb: "Every ritual, mehendi to reception — with film.",
     features: [
       "Up to 4 events across 2–3 days",
@@ -177,7 +171,7 @@ export const PACKAGES = [
 ];
 
 export const PACKAGES_NOTE =
-  "Pre-wedding shoots from ₹25,000 · travel & stay at actuals outside Kolkata · 30% advance reserves your date · GST as applicable.";
+  "Pre-wedding shoots available on their own or with any package · travel & stay at actuals outside Kolkata · a 30% advance reserves your date.";
 
 export const FAQS = [
   {

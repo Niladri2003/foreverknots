@@ -14,9 +14,9 @@ export default function Packages({ onJump }) {
             </h2>
           </Reveal>
           <Reveal as="p" className="sec-head__lead" delay={0.1}>
-            Honest, printed-on-the-page pricing. Every package includes our
-            full editing pass, a private online gallery, and the two of us
-            arriving early and staying late.
+            Every package includes our full editing pass, a private online
+            gallery, and the two of us arriving early and staying late. Tell
+            us the shape of your days and we'll send an exact quote.
           </Reveal>
         </div>
 
@@ -25,10 +25,6 @@ export default function Packages({ onJump }) {
             <Reveal key={pkg.id} className={`pkg ${pkg.featured ? 'pkg--featured' : ''}`} delay={i * 0.1}>
               {pkg.tag && <div className="pkg__tag">{pkg.tag}</div>}
               <h3 className="pkg__name">{pkg.name}</h3>
-              <div className="pkg__price-row">
-                <div className="pkg__price">{pkg.price}</div>
-                <div className="pkg__price-note">{pkg.priceNote}</div>
-              </div>
               <p className="pkg__blurb">{pkg.blurb}</p>
               <ul className="pkg__features">
                 {pkg.features.map((f) => <li key={f}>{f}</li>)}
@@ -39,7 +35,7 @@ export default function Packages({ onJump }) {
                 </button>
                 <a
                   className="btn btn--ghost"
-                  href={waLink(INFO.phone, `Hi foreverknots! We'd love to know more about ${pkg.name} (${pkg.price} ${pkg.priceNote}) for our wedding.`)}
+                  href={waLink(INFO.phone, `Hi foreverknots! We'd love to know more about ${pkg.name} package for our wedding.`)}
                   target="_blank"
                   rel="noreferrer"
                 >
