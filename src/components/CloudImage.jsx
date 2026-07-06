@@ -8,10 +8,20 @@ export default function CloudImage({
   ar,
   fill = false,
   eager = false,
+  placeholder = true,
   className,
+  style,
   ...rest
 }) {
   const opts = { ar, fill };
+  // Blurred LQIP behind the streaming image; skipped for preloaded hero frames
+  const lqip = placeholder && !eager
+    ? {
+        backgroundImage: `url("${cld(name, { ...opts, w: 32, blur: true })}")`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }
+    : undefined;
   return (
     <img
       src={cld(name, { ...opts, w: widths[widths.length - 1] })}
@@ -22,6 +32,7 @@ export default function CloudImage({
       decoding="async"
       fetchpriority={eager ? 'high' : undefined}
       className={className}
+      style={lqip || style ? { ...lqip, ...style } : undefined}
       {...rest}
     />
   );

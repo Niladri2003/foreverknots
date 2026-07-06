@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { m, AnimatePresence } from 'motion/react';
+import { useState, useMemo, useRef } from 'react';
+import { m, AnimatePresence, useMotionValue, useSpring } from 'motion/react';
 import { PHOTOS, FILTERS } from '../data';
 import CloudImage from './CloudImage';
 import Reveal from './Reveal';
@@ -13,6 +13,16 @@ const TILE_SIZES = '(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 45vw';
 export default function Work({ openLightbox }) {
   const [filter, setFilter] = useState('all');
   const [showAll, setShowAll] = useState(false);
+
+  // "View →" label following the cursor over the grid — pointer devices only
+  const [labelOn, setLabelOn] = useState(false);
+  const fine = useRef(
+    typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches,
+  );
+  const cx = useMotionValue(0);
+  const cy = useMotionValue(0);
+  const sx = useSpring(cx, { stiffness: 500, damping: 45 });
+  const sy = useSpring(cy, { stiffness: 500, damping: 45 });
 
   const filtered = useMemo(
     () => PHOTOS.filter((p) => filter === 'all' || p.cat === filter),
@@ -48,7 +58,12 @@ export default function Work({ openLightbox }) {
           </Reveal>
         </div>
 
-        <div className="grid">
+        <div
+          className="grid"
+          onMouseMove={(e) => { cx.set(e.clientX); cy.set(e.clientY); }}
+          onMouseEnter={() => setLabelOn(true)}
+          onMouseLeave={() => setLabelOn(false)}
+        >
           <AnimatePresence mode="popLayout" initial={false}>
             {visible.map((p, i) => (
               <m.div
@@ -83,6 +98,18 @@ export default function Work({ openLightbox }) {
             ))}
           </AnimatePresence>
         </div>
+
+        {fine.current && (
+          <m.div
+            className="cursor-label"
+            style={{ x: sx, y: sy }}
+            animate={{ opacity: labelOn ? 1 : 0, scale: labelOn ? 1 : 0.8 }}
+            transition={{ duration: 0.25, ease: EASE }}
+            aria-hidden="true"
+          >
+            <span>View →</span>
+          </m.div>
+        )}
 
         {filtered.length > 8 && !showAll && (
           <div className="loadmore">

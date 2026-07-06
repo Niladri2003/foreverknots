@@ -3,6 +3,7 @@ import { m, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import CloudImage from './CloudImage';
 import Reveal from './Reveal';
 import { useBodyLock } from '../hooks/useBodyLock';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import { LUXE } from '../utils/motion';
 
 const GALLERY_SIZES = '(max-width: 768px) 100vw, 50vw';
@@ -10,6 +11,8 @@ const GALLERY_AR = ['4:3', '4:5', '4:5', '4:5', '21:9'];
 
 function StoryPanel({ story, onClose, openLightbox }) {
   const innerRef = useRef(null);
+  const rootRef = useRef(null);
+  useFocusTrap(rootRef, true);
   const { scrollY } = useScroll({ container: innerRef });
   const yHero = useTransform(scrollY, [0, 800], [0, -70]);
 
@@ -24,6 +27,11 @@ function StoryPanel({ story, onClose, openLightbox }) {
   return (
     <m.div
       className="story-modal-root"
+      ref={rootRef}
+      tabIndex={-1}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${story.couple} — wedding story`}
       initial={{ y: '100%' }}
       animate={{ y: 0, transition: { duration: 0.7, ease: LUXE } }}
       exit={{ y: '100%', transition: { duration: 0.5, ease: LUXE } }}

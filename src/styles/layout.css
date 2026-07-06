@@ -298,6 +298,33 @@
 
 .loadmore { display: flex; justify-content: center; margin-top: var(--sp-5); }
 
+/* "View →" label trailing the cursor over the work grid */
+.cursor-label {
+  position: fixed; top: 0; left: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0;
+}
+.cursor-label span {
+  display: inline-block;
+  transform: translate(-50%, -140%);
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--bg-deep) 78%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--rule-gold);
+  color: var(--accent-warm);
+  font-family: var(--monof);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+@media (hover: none), (max-width: 1024px) {
+  .cursor-label { display: none; }
+}
+
 /* STORIES */
 .stories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 3vw, 36px); }
 @media (max-width: 1024px) { .stories-grid { grid-template-columns: 1fr; gap: 56px; } }

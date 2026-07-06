@@ -1,6 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { MotionConfig, LazyMotion, domMax, AnimatePresence } from 'motion/react';
 import { ReactLenis, useLenis } from 'lenis/react';
+import { STORIES } from './data';
+import Seo from './components/Seo';
 import Nav from './components/Nav';
 import Hero from './components/Hero';
 import Marquee from './components/Marquee';
@@ -36,8 +38,28 @@ function Site({ reduced }) {
   const next = useCallback(() => setLb((s) => ({ ...s, index: (s.index + 1) % s.items.length, dir: 1 })), []);
 
   const [story, setStory] = useState(null);
-  const openStory = useCallback((s) => setStory(s), []);
-  const closeStory = useCallback(() => setStory(null), []);
+  const openStory = useCallback((s) => {
+    setStory(s);
+    window.history.pushState(null, '', `#story=${s.id}`);
+  }, []);
+  const closeStory = useCallback(() => {
+    setStory(null);
+    if (window.location.hash.startsWith('#story=')) {
+      window.history.pushState(null, '', window.location.pathname + window.location.search);
+    }
+  }, []);
+
+  // Shareable story URLs: open on direct load, sync with back/forward
+  useEffect(() => {
+    const applyHash = () => {
+      const match = window.location.hash.match(/^#story=(.+)$/);
+      const s = match && STORIES.find((x) => x.id === match[1]);
+      setStory(s || null);
+    };
+    applyHash();
+    window.addEventListener('popstate', applyHash);
+    return () => window.removeEventListener('popstate', applyHash);
+  }, []);
 
   const scrollToId = useCallback((id) => {
     const el = document.getElementById(id);
@@ -48,13 +70,13 @@ function Site({ reduced }) {
 
   const jump = useCallback((id) => {
     if (story) {
-      setStory(null);
+      closeStory();
       // wait for the panel's exit slide before scrolling
       setTimeout(() => scrollToId(id), 550);
       return;
     }
     scrollToId(id);
-  }, [story, scrollToId]);
+  }, [story, closeStory, scrollToId]);
 
   return (
     <>
@@ -79,6 +101,7 @@ function Site({ reduced }) {
       <Foot onJump={jump} />
 
       <WhatsAppFloat />
+      <Seo />
       <div className="grain" aria-hidden="true" />
 
       <Lightbox items={lb.items} index={lb.index} dir={lb.dir} onClose={closeLightbox} onPrev={prev} onNext={next} />
