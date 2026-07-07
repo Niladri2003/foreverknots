@@ -1,97 +1,127 @@
 import { useEffect, useRef } from 'react';
+import { m, AnimatePresence, useScroll, useTransform } from 'motion/react';
+import CloudImage from './CloudImage';
+import Reveal from './Reveal';
+import { useBodyLock } from '../hooks/useBodyLock';
+import { useFocusTrap } from '../hooks/useFocusTrap';
+import { LUXE } from '../utils/motion';
 
-export default function StoryModal({ story, onClose, openLightbox }) {
-  const open = !!story;
+const GALLERY_SIZES = '(max-width: 768px) 100vw, 50vw';
+const GALLERY_AR = ['4:3', '4:5', '4:5', '4:5', '21:9'];
+
+function StoryPanel({ story, onClose, openLightbox }) {
   const innerRef = useRef(null);
+  const rootRef = useRef(null);
+  useFocusTrap(rootRef, true);
+  const { scrollY } = useScroll({ container: innerRef });
+  const yHero = useTransform(scrollY, [0, 800], [0, -70]);
 
   useEffect(() => {
-    if (open) document.body.classList.add('lock');
-    else document.body.classList.remove('lock');
-    return () => document.body.classList.remove('lock');
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
+  }, [onClose]);
 
-  useEffect(() => {
-    if (open && innerRef.current) innerRef.current.scrollTop = 0;
-  }, [story?.id, open]);
-
-  useEffect(() => {
-    if (!open) return;
-    const els = innerRef.current?.querySelectorAll('.reveal:not(.in)') || [];
-    const t = setTimeout(() => { els.forEach((el) => el.classList.add('in')); }, 80);
-    return () => clearTimeout(t);
-  }, [open, story?.id]);
+  const [first, second] = story.couple.split(' & ');
 
   return (
-    <div className={`story-modal ${open ? 'open' : ''}`} ref={innerRef}>
+    <m.div
+      className="story-modal-root"
+      ref={rootRef}
+      tabIndex={-1}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${story.couple} — wedding story`}
+      initial={{ y: '100%' }}
+      animate={{ y: 0, transition: { duration: 0.7, ease: LUXE } }}
+      exit={{ y: '100%', transition: { duration: 0.5, ease: LUXE } }}
+    >
+      <div className="story-modal" ref={innerRef} data-lenis-prevent>
+        <div className="story-modal__hero">
+          <m.div style={{ y: yHero }}>
+            <CloudImage name={story.cover} alt={story.couple} sizes="100vw" widths={[768, 1080, 1440, 1600]} eager />
+          </m.div>
+          <m.div
+            className="story-modal__hero-text"
+            initial={{ opacity: 0, y: 32 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, ease: LUXE, delay: 0.5 }}
+          >
+            <div className="mono">{story.type} · {story.when}</div>
+            <h2>
+              <em>{first}</em>
+              <span style={{ fontStyle: 'italic', color: 'var(--accent-warm)' }}> & </span>
+              {second}
+            </h2>
+          </m.div>
+        </div>
+
+        <div className="story-modal__body">
+          <div className="story-modal__intro">
+            <Reveal className="story-modal__facts" root={innerRef}>
+              <div className="mono" style={{ marginBottom: 16 }}>The Day, in Facts</div>
+              <dl>
+                {story.facts.map(([k, v]) => (
+                  <div className="row" key={k}>
+                    <dt>{k}</dt>
+                    <dd>{v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
+            <Reveal className="story-modal__narrative" root={innerRef} delay={0.1}>
+              <div className="mono" style={{ marginBottom: 24 }}>A note from the day</div>
+              {story.narrative.map((p, i) => <p key={i}>{p}</p>)}
+            </Reveal>
+          </div>
+
+          <div className="story-modal__gallery">
+            {story.gallery.map((name, i) => (
+              <Reveal
+                key={name + i}
+                className={`g-v${(i % 5) + 1}`}
+                root={innerRef}
+                delay={(i % 4) * 0.08}
+                onClick={() => {
+                  const items = story.gallery.map((n) => ({
+                    name: n, title: story.couple, place: story.place, year: story.when,
+                  }));
+                  openLightbox(items, i);
+                }}
+              >
+                <CloudImage
+                  name={name}
+                  alt={`${story.couple} — frame ${i + 1}`}
+                  sizes={GALLERY_SIZES}
+                  fill
+                  ar={GALLERY_AR[i % 5]}
+                />
+              </Reveal>
+            ))}
+          </div>
+
+          <div className="story-modal__end">
+            <button className="btn btn--ghost" onClick={onClose}>
+              Back to the site <span className="ar">→</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button className="story-modal__close" onClick={onClose}>
+        Close <span>×</span>
+      </button>
+    </m.div>
+  );
+}
+
+export default function StoryModal({ story, onClose, openLightbox }) {
+  useBodyLock(!!story);
+  return (
+    <AnimatePresence>
       {story && (
-        <>
-          <button className="story-modal__close" onClick={onClose}>
-            Close <span>×</span>
-          </button>
-          <div className="story-modal__hero">
-            <img src={story.cover} alt={story.couple} />
-            <div className="story-modal__hero-text reveal">
-              <div className="mono">{story.type} · {story.when}</div>
-              <h2>
-                <em>{story.couple.split(' & ')[0]}</em>
-                <span style={{ fontStyle: 'italic', color: 'var(--accent-warm)' }}> & </span>
-                {story.couple.split(' & ')[1]}
-              </h2>
-            </div>
-          </div>
-
-          <div className="story-modal__body">
-            <div className="story-modal__intro">
-              <div className="story-modal__facts reveal">
-                <div className="mono" style={{ marginBottom: 16 }}>The Day, in Facts</div>
-                <dl>
-                  {story.facts.map(([k, v]) => (
-                    <div className="row" key={k}>
-                      <dt>{k}</dt>
-                      <dd>{v}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-              <div className="story-modal__narrative reveal" data-delay="1">
-                <div className="mono" style={{ marginBottom: 24 }}>A note from the day</div>
-                {story.narrative.map((p, i) => <p key={i}>{p}</p>)}
-              </div>
-            </div>
-
-            <div className="story-modal__gallery">
-              {story.gallery.map((src, i) => (
-                <div
-                  key={src + i}
-                  className="reveal"
-                  data-delay={(i % 4) + 1}
-                  onClick={() => {
-                    const items = story.gallery.map((s) => ({
-                      src: s, title: story.couple, place: story.place, year: story.when,
-                    }));
-                    openLightbox(items, i);
-                  }}
-                >
-                  <img src={src} alt={`${story.couple} — frame ${i + 1}`} loading="lazy" />
-                </div>
-              ))}
-            </div>
-
-            <div style={{ textAlign: 'center', marginTop: 'var(--sp-6)' }}>
-              <button className="btn btn--ghost" onClick={onClose}>
-                Back to the site <span className="ar">→</span>
-              </button>
-            </div>
-          </div>
-        </>
+        <StoryPanel key={story.id} story={story} onClose={onClose} openLightbox={openLightbox} />
       )}
-    </div>
+    </AnimatePresence>
   );
 }

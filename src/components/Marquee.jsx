@@ -1,17 +1,18 @@
+import { m } from 'motion/react';
+import { useMarqueeDrift } from '../hooks/useMarqueeDrift';
+
 const WORDS = [
   'Kolkata', 'Bhubaneswar', 'Ranchi', 'Varanasi', 'Kashmir',
   'Pre-Weddings', 'Bengali Weddings', 'Destinations', 'Heirloom Albums',
 ];
 
-function Row({ id }) {
+function Row({ ariaHidden }) {
   return (
-    <span key={id}>
+    <span aria-hidden={ariaHidden || undefined}>
       {WORDS.map((w, i) => (
         <span key={i}>
           {w}
-          {i < WORDS.length - 1 && (
-            <span style={{ display: 'inline-block', width: 5, height: 5, borderRadius: '50%', background: 'var(--accent-warm)', margin: '0 4px', verticalAlign: 'middle' }} />
-          )}
+          {i < WORDS.length - 1 && <span className="marquee__dot" />}
         </span>
       ))}
     </span>
@@ -19,11 +20,13 @@ function Row({ id }) {
 }
 
 export default function Marquee() {
+  const transform = useMarqueeDrift(1.4);
   return (
     <div className="marquee">
-      <div className="marquee__track">
-        <Row id="a" /><Row id="b" />
-      </div>
+      <m.div className="marquee__track" style={{ transform }}>
+        <Row />
+        <Row ariaHidden />
+      </m.div>
     </div>
   );
 }

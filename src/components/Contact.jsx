@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { INFO } from '../data';
+import Reveal from './Reveal';
+import { waLink } from '../utils/whatsapp';
 
 const DATE_CHIPS = ['Winter 2026', 'Spring 2026', 'Summer 2026', 'Autumn 2026', '2027', 'Still deciding'];
 const TYPE_CHIPS = ['Pre-Wedding', 'Wedding Day', 'Both', 'Other'];
@@ -72,7 +74,7 @@ export default function Contact() {
     <section id="contact" className="contact">
       <div className="wrap">
         <div className="contact-grid">
-          <div className="contact__intro reveal">
+          <Reveal className="contact__intro">
             <div className="mono">Inquiries · open for 2026 / 2027</div>
             <h2 className="display display-l">
               Let's <span className="swash">begin</span>.
@@ -108,13 +110,17 @@ export default function Contact() {
               <a href={INFO.instagram} target="_blank" rel="noopener noreferrer">
                 Instagram <span>↗</span>
               </a>
-              <a href={INFO.facebook} target="_blank" rel="noopener noreferrer">
-                Facebook <span>↗</span>
+              <a
+                href={waLink(INFO.phone, "Hi foreverknots! We're planning our wedding and would love to talk about photography.")}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                WhatsApp <span>↗</span>
               </a>
             </div>
-          </div>
+          </Reveal>
 
-          <form className="form reveal" data-delay="1" onSubmit={onSubmit} noValidate>
+          <Reveal as="form" className="form" delay={0.1} onSubmit={onSubmit} noValidate>
             <div className="form__row">
               <div className={fieldCls('firstName')}>
                 <label>Your name</label>
@@ -182,10 +188,20 @@ export default function Contact() {
               </div>
             </div>
 
-            <button type="submit" className="btn">
-              Send the note <span className="ar">→</span>
-            </button>
-          </form>
+            <div className="form__actions">
+              <button type="submit" className="btn">
+                Send the note <span className="ar">→</span>
+              </button>
+              <a
+                className="btn btn--ghost"
+                href={waLink(INFO.phone, "Hi foreverknots! We're planning our wedding and would love to talk about photography.")}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                or WhatsApp us <span className="ar">→</span>
+              </a>
+            </div>
+          </Reveal>
         </div>
       </div>
     </section>

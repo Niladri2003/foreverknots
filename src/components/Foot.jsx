@@ -1,6 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import { INFO } from '../data';
+import { waLink } from '../utils/whatsapp';
 
 export default function Foot({ onJump }) {
+  const navigate = useNavigate();
   return (
     <footer className="foot">
       <div className="wrap">
@@ -19,8 +22,10 @@ export default function Foot({ onJump }) {
             <ul>
               <li onClick={() => onJump('work')}>Work</li>
               <li onClick={() => onJump('stories')}>Stories</li>
+              <li onClick={() => navigate('/gallery')}>Gallery</li>
+              <li onClick={() => onJump('packages')}>Investment</li>
               <li onClick={() => onJump('about')}>About</li>
-              <li onClick={() => onJump('voices')}>Voices</li>
+              <li onClick={() => onJump('faq')}>FAQ</li>
               <li onClick={() => onJump('contact')}>Inquire</li>
             </ul>
           </div>
@@ -28,8 +33,16 @@ export default function Foot({ onJump }) {
             <h5>Elsewhere</h5>
             <ul>
               <li><a href={INFO.instagram} target="_blank" rel="noopener noreferrer">Instagram {INFO.instagramHandle}</a></li>
-              <li>Facebook · foreverknots</li>
-              <li>{INFO.email}</li>
+              <li>
+                <a
+                  href={waLink(INFO.phone, "Hi foreverknots! We're planning our wedding and would love to talk about photography.")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  WhatsApp us
+                </a>
+              </li>
+              <li><a href={`mailto:${INFO.email}`}>{INFO.email}</a></li>
               <li>{INFO.phone}</li>
             </ul>
           </div>

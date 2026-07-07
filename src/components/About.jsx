@@ -1,26 +1,67 @@
+import { useState, useEffect, useRef } from 'react';
+import { m, animate, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import CloudImage from './CloudImage';
+import Reveal from './Reveal';
+import { LUXE } from '../utils/motion';
+
+function Num({ value, children }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-10% 0px' });
+  const reduced = useReducedMotion();
+  const [n, setN] = useState(reduced ? value : 0);
+
+  useEffect(() => {
+    if (!inView) return;
+    if (reduced) { setN(value); return; }
+    const controls = animate(0, value, {
+      duration: 1.4,
+      ease: LUXE,
+      onUpdate: (v) => setN(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [inView, value, reduced]);
+
+  return (
+    <div className="num" ref={ref}>
+      {n}
+      {children}
+    </div>
+  );
+}
+
 export default function About() {
+  const mediaRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: mediaRef, offset: ['start end', 'end start'] });
+  const y = useTransform(scrollYProgress, [0, 1], ['-6%', '0%']);
+
   return (
     <section id="about" className="section">
       <div className="wrap">
         <div className="sec-head">
-          <div className="sec-head__meta reveal">
+          <Reveal className="sec-head__meta">
             <div className="mono">On the photographer</div>
             <h2 className="sec-head__title">
               Hello — we're a <em>small studio</em><br />out of Kolkata.
             </h2>
-          </div>
-          <p className="sec-head__lead reveal" data-delay="1">
+          </Reveal>
+          <Reveal as="p" className="sec-head__lead" delay={0.1}>
             foreverknots is a five-year-old wedding photography practice. We work
             in pairs — one camera close in, one stepped back — and we believe
             the best wedding photographs are the ones nobody noticed being taken.
-          </p>
+          </Reveal>
         </div>
 
         <div className="about-grid">
-          <div className="about__media reveal" data-delay="1">
-            <img src="https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto/foreverknots/p25.jpg" alt="The photographer at work" />
-          </div>
-          <div className="about__body reveal" data-delay="2">
+          <Reveal className="about__media" delay={0.1} ref={mediaRef}>
+            <m.div style={{ y }}>
+              <CloudImage
+                name="p25"
+                alt="The photographer at work"
+                sizes="(max-width: 768px) 100vw, 40vw"
+              />
+            </m.div>
+          </Reveal>
+          <Reveal className="about__body" delay={0.2}>
             <p>
               We started in 2020, the year nobody got married. The weddings we
               did photograph that year were small — five guests, two photographers,
@@ -44,19 +85,19 @@ export default function About() {
 
             <div className="about__stats">
               <div className="about__stat">
-                <div className="num">80<em>+</em></div>
+                <Num value={80}><em>+</em></Num>
                 <div className="label">Weddings photographed</div>
               </div>
               <div className="about__stat">
-                <div className="num">12</div>
+                <Num value={12} />
                 <div className="label">Cities, five states</div>
               </div>
               <div className="about__stat">
-                <div className="num">5<em> yrs</em></div>
+                <Num value={5}><em> yrs</em></Num>
                 <div className="label">Quietly in practice</div>
               </div>
             </div>
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>
