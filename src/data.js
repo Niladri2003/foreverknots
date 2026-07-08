@@ -208,13 +208,13 @@ export const INSTA_PHOTOS = ["p04", "p13", "p07", "p20", "p24", "p12", "p02", "p
 
 export const INFO = {
   brand: "foreverknots",
-  site: "https://foreverknots.in",
+  site: "https://foreverknots.studio",
   basedIn: "Kolkata, India",
   serves: ["Kolkata", "Bhubaneswar", "Ranchi", "Varanasi", "Kashmir"],
   yearsActive: 5,
   weddingsDone: 80,
   cities: 12,
-  email: "hello@foreverknots.in",
+  email: "contact@foreverknots.studio",
   phone: "+91 83358 77977",
   instagram: "https://www.instagram.com/forever_knots__/",
   instagramHandle: "@forever_knots__",

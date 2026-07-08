@@ -1,0 +1,6 @@
+# Canonicalize www -> apex (harmless if the www host isn't attached in Netlify)
+https://www.foreverknots.studio/*  https://foreverknots.studio/:splat  301!
+
+# SPA fallback: every path serves the app so deep links (/gallery, /stories/:id)
+# resolve on direct hits and for crawlers instead of 404ing.
+/*  /index.html  200

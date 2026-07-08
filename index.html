@@ -6,10 +6,10 @@
     <title>foreverknots — Wedding Photography, Kolkata</title>
     <meta name="description" content="Cinematic wedding photography out of Kolkata. Documentary, slow, and printed on paper — pre-weddings, Bengali weddings and beyond. Tying knots since 2020." />
     <meta name="theme-color" content="#0E0C09" />
-    <link rel="canonical" href="https://foreverknots.in/" />
+    <link rel="canonical" href="https://foreverknots.studio/" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://foreverknots.in/" />
+    <meta property="og:url" content="https://foreverknots.studio/" />
     <meta property="og:site_name" content="foreverknots" />
     <meta property="og:title" content="foreverknots — Wedding Photography, Kolkata" />
     <meta property="og:description" content="Cinematic wedding photography out of Kolkata. Documentary, slow, and printed on paper. Tying knots since 2020." />
@@ -19,13 +19,83 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://res.cloudinary.com" />
-    <link rel="preload" as="image" href="https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto,w_1440/foreverknots/hero-couple.jpg" />
+    <!-- Responsive hero preload — imagesrcset/imagesizes match the <img> below exactly,
+         so the browser fetches ONE width and reuses it for the boot image and the React hero. -->
+    <link
+      rel="preload"
+      as="image"
+      fetchpriority="high"
+      href="https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto,w_1600/foreverknots/hero-couple.jpg"
+      imagesizes="100vw"
+      imagesrcset="
+        https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto,w_768/foreverknots/hero-couple.jpg 768w,
+        https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto,w_1080/foreverknots/hero-couple.jpg 1080w,
+        https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto,w_1440/foreverknots/hero-couple.jpg 1440w,
+        https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto,w_1600/foreverknots/hero-couple.jpg 1600w"
+    />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/png" sizes="32x32" href="https://res.cloudinary.com/dvbnkndyc/image/upload/c_fill,w_32,h_32/foreverknots/logo.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="https://res.cloudinary.com/dvbnkndyc/image/upload/c_fill,w_192,h_192/foreverknots/logo.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="https://res.cloudinary.com/dvbnkndyc/image/upload/c_fill,w_180,h_180/foreverknots/logo.png" />
+
+    <style>
+      /* Critical: paint the first hero frame before the JS bundle boots, so LCP no
+         longer waits for React to mount. The boot image lives OUTSIDE #root and is
+         removed by the hero once React has painted its own copy (removing an element
+         does not retract an already-recorded LCP), so it wins LCP no matter whether
+         the image or the bundle finishes first.
+         Framing mirrors .hero__slides (top:-10%; height:110%) so there is no shift on
+         handoff. The 4px height trim is deliberate: current Chromium excludes any image
+         whose rect fully covers the viewport (treats it as a background), so a hair
+         short of full-bleed keeps this the LCP element. The 4px sits under the hero's
+         darkest scrim and is covered the instant the React hero paints — invisible. */
+      .boot-hero {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: -10vh;
+        height: calc(110vh - 4px);
+        object-fit: cover;
+        z-index: 0;
+        background: #080706;
+        pointer-events: none;
+      }
+      /* App paints above the boot image, hiding it the moment the hero renders. */
+      #root { position: relative; z-index: 1; }
+    </style>
   </head>
   <body>
+    <!-- LCP element. Static, un-animated <img> that lives OUTSIDE #root so React never
+         clears it before it paints. The hero removes it (#boot-hero) once its own copy
+         has loaded; removing it does not retract the recorded LCP. -->
+    <img
+      id="boot-hero"
+      class="boot-hero"
+      alt="Couple at dusk, wrapped in warm light"
+      fetchpriority="high"
+      decoding="sync"
+      sizes="100vw"
+      src="https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto,w_1600/foreverknots/hero-couple.jpg"
+      srcset="
+        https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto,w_768/foreverknots/hero-couple.jpg 768w,
+        https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto,w_1080/foreverknots/hero-couple.jpg 1080w,
+        https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto,w_1440/foreverknots/hero-couple.jpg 1440w,
+        https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto,w_1600/foreverknots/hero-couple.jpg 1600w"
+    />
+    <script>
+      /* On a repeat visit there's no preloader to hide the brief hero-image load, so
+         promote the boot hero to an overlay (above the app) — it covers that window
+         showing the hero, and the React hero removes it (#boot-hero) the instant its
+         own copy has painted. On the first visit the preloader is the intended cover,
+         so the boot hero stays behind the app (z-index:0). A timeout is the last-resort
+         safety net. Removing it never retracts the LCP it already recorded. */
+      (function () {
+        var el = document.getElementById('boot-hero');
+        if (!el) return;
+        try { if (sessionStorage.getItem('fk-seen')) el.style.zIndex = '140'; } catch (e) {}
+        setTimeout(function () { if (el) { el.remove(); el = null; } }, 6000);
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
