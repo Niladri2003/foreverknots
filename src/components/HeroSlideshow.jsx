@@ -38,7 +38,7 @@ export default function HeroSlideshow({ slides, index, interval = 5500 }) {
           name={slide.id}
           alt={slide.alt}
           sizes="100vw"
-          widths={[768, 1080, 1440, 1600]}
+          widths={[768, 1080, 1440, 1920, 2048]}
           eager={index === 0}
           // Retire the static boot image (index.html) the instant this real frame has
           // decoded AND painted (decode + two frames) — never sooner, or an overlay

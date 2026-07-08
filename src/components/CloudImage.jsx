@@ -3,17 +3,18 @@ import { cld, srcSet } from '../utils/cloudinary';
 export default function CloudImage({
   name,
   alt = '',
-  widths = [480, 768, 1080, 1440],
+  widths = [480, 768, 1080, 1440, 1920],
   sizes = '100vw',
   ar,
   fill = false,
+  q,
   eager = false,
   placeholder = true,
   className,
   style,
   ...rest
 }) {
-  const opts = { ar, fill };
+  const opts = { ar, fill, q };
   // Blurred LQIP behind the streaming image; skipped for preloaded hero frames
   const lqip = placeholder && !eager
     ? {

@@ -57,6 +57,8 @@ export default function PhotoGrid({ photos, lightboxPhotos, openLightbox }) {
                 sizes={TILE_SIZES}
                 fill
                 ar={PATTERN_AR[i % 8]}
+                q="auto:good"
+                widths={[400, 640, 900, 1200, 1440]}
               />
               <div className="tile__overlay">
                 <div className="tile__title">{p.title}</div>

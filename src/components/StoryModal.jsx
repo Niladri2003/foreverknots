@@ -39,7 +39,7 @@ function StoryPanel({ story, onClose, openLightbox }) {
       <div className="story-modal" ref={innerRef} data-lenis-prevent>
         <div className="story-modal__hero">
           <m.div style={{ y: yHero }}>
-            <CloudImage name={story.cover} alt={story.couple} sizes="100vw" widths={[768, 1080, 1440, 1600]} eager />
+            <CloudImage name={story.cover} alt={story.couple} sizes="100vw" widths={[768, 1080, 1440, 1920, 2048]} eager />
           </m.div>
           <m.div
             className="story-modal__hero-text"
@@ -95,6 +95,8 @@ function StoryPanel({ story, onClose, openLightbox }) {
                   sizes={GALLERY_SIZES}
                   fill
                   ar={GALLERY_AR[i % 5]}
+                  q="auto:good"
+                  widths={[480, 768, 1080, 1440]}
                 />
               </Reveal>
             ))}

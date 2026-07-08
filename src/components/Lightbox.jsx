@@ -56,7 +56,7 @@ function LightboxShell({ items, index, dir, onClose, onPrev, onNext }) {
               else if (info.offset.x > 70 || info.velocity.x > 500) onPrev();
             }}
           >
-            <img src={cld(item.name, { w: 1600 })} alt={item.title} draggable={false} />
+            <img src={cld(item.name, { w: 2048 })} alt={item.title} draggable={false} />
             <figcaption className="lightbox__caption">
               <div className="t">{item.title}</div>
               <div className="s">{item.place} <span className="dot-sep" /> {item.year}</div>
