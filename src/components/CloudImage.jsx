@@ -29,7 +29,9 @@ export default function CloudImage({
       sizes={sizes}
       alt={alt}
       loading={eager ? 'eager' : 'lazy'}
-      decoding="async"
+      // Eager (hero) frame decodes synchronously so it paints the same frame it mounts,
+      // keeping the handoff from the boot image seamless.
+      decoding={eager ? 'sync' : 'async'}
       fetchpriority={eager ? 'high' : undefined}
       className={className}
       style={lqip || style ? { ...lqip, ...style } : undefined}

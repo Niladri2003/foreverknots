@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { MotionConfig, LazyMotion, domMax, AnimatePresence } from 'motion/react';
 import { ReactLenis, useLenis } from 'lenis/react';
 import { Routes, Route, Outlet, Navigate, useLocation, useNavigate, useMatch } from 'react-router-dom';
@@ -10,7 +10,6 @@ import Marquee from './components/Marquee';
 import Intro from './components/Intro';
 import Work from './components/Work';
 import Stories from './components/Stories';
-import StoryModal from './components/StoryModal';
 import Packages from './components/Packages';
 import About from './components/About';
 import Voices from './components/Voices';
@@ -18,11 +17,16 @@ import Faq from './components/Faq';
 import InstaStrip from './components/InstaStrip';
 import Contact from './components/Contact';
 import Foot from './components/Foot';
-import Lightbox from './components/Lightbox';
 import Preloader from './components/Preloader';
 import WhatsAppFloat from './components/WhatsAppFloat';
-import GalleryPage from './pages/GalleryPage';
 import { usePrefersReducedMotion } from './hooks/usePrefersReducedMotion';
+
+// Code-split: the gallery route and the on-demand overlays leave the initial bundle.
+// Overlays mount on first open, then stay mounted so their internal AnimatePresence
+// exit animations still run.
+const GalleryPage = lazy(() => import('./pages/GalleryPage'));
+const Lightbox = lazy(() => import('./components/Lightbox'));
+const StoryModal = lazy(() => import('./components/StoryModal'));
 
 function HomePage({ ready, openLightbox, openStory, jump }) {
   return (
@@ -67,6 +71,13 @@ function Site({ reduced }) {
   const openStory = useCallback((s) => navigate(`/stories/${s.id}`), [navigate]);
   const closeStory = useCallback(() => navigate('/'), [navigate]);
 
+  // Load the lazy overlays on first use, then keep them mounted (so their internal
+  // AnimatePresence handles open/close). A direct /stories/:id hit opens one immediately.
+  const [lbMounted, setLbMounted] = useState(false);
+  useEffect(() => { if (lb.index != null) setLbMounted(true); }, [lb.index]);
+  const [storyMounted, setStoryMounted] = useState(false);
+  useEffect(() => { if (story) setStoryMounted(true); }, [story]);
+
   // Scroll to top when switching between the home page and the gallery page
   const page = location.pathname.startsWith('/gallery') ? 'gallery' : 'home';
   useEffect(() => {
@@ -110,7 +121,14 @@ function Site({ reduced }) {
           <Route index element={null} />
           <Route path="stories/:id" element={null} />
         </Route>
-        <Route path="/gallery" element={<GalleryPage openLightbox={openLightbox} />} />
+        <Route
+          path="/gallery"
+          element={
+            <Suspense fallback={<div aria-hidden="true" style={{ minHeight: '100vh' }} />}>
+              <GalleryPage openLightbox={openLightbox} />
+            </Suspense>
+          }
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
@@ -120,8 +138,16 @@ function Site({ reduced }) {
       <Seo />
       <div className="grain" aria-hidden="true" />
 
-      <Lightbox items={lb.items} index={lb.index} dir={lb.dir} onClose={closeLightbox} onPrev={prev} onNext={next} />
-      <StoryModal story={story} onClose={closeStory} openLightbox={openLightbox} />
+      {lbMounted && (
+        <Suspense fallback={null}>
+          <Lightbox items={lb.items} index={lb.index} dir={lb.dir} onClose={closeLightbox} onPrev={prev} onNext={next} />
+        </Suspense>
+      )}
+      {storyMounted && (
+        <Suspense fallback={null}>
+          <StoryModal story={story} onClose={closeStory} openLightbox={openLightbox} />
+        </Suspense>
+      )}
     </>
   );
 }

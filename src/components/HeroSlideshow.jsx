@@ -40,6 +40,23 @@ export default function HeroSlideshow({ slides, index, interval = 5500 }) {
           sizes="100vw"
           widths={[768, 1080, 1440, 1600]}
           eager={index === 0}
+          // Retire the static boot image (index.html) the instant this real frame has
+          // decoded AND painted (decode + two frames) — never sooner, or an overlay
+          // boot image on repeat visits would flash the load gap. Removing it does not
+          // retract the LCP it already recorded.
+          onLoad={
+            index === 0
+              ? (e) => {
+                  const img = e.currentTarget;
+                  const drop = () =>
+                    requestAnimationFrame(() =>
+                      requestAnimationFrame(() => document.getElementById('boot-hero')?.remove()),
+                    );
+                  if (img.decode) img.decode().then(drop, drop);
+                  else drop();
+                }
+              : undefined
+          }
         />
       </m.div>
     </AnimatePresence>

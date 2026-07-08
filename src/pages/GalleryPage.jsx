@@ -1,11 +1,9 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { PHOTOS, FILTERS } from '../data';
 import PhotoGrid from '../components/PhotoGrid';
 import Reveal from '../components/Reveal';
 import { m } from 'motion/react';
 import { maskLine, stagger } from '../utils/motion';
-
-const HOME_TITLE = 'foreverknots — Wedding Photography, Kolkata';
 
 export default function GalleryPage({ openLightbox }) {
   const [filter, setFilter] = useState('all');
@@ -13,11 +11,6 @@ export default function GalleryPage({ openLightbox }) {
     () => PHOTOS.filter((p) => filter === 'all' || p.cat === filter),
     [filter],
   );
-
-  useEffect(() => {
-    document.title = 'The Gallery — foreverknots · Wedding Photography, Kolkata';
-    return () => { document.title = HOME_TITLE; };
-  }, []);
 
   return (
     <main className="gallery-page">
