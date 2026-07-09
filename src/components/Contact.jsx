@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { INFO } from '../data';
 import Reveal from './Reveal';
 import { waLink } from '../utils/whatsapp';
+import { sendEnquiry } from '../utils/contact';
 
 const DATE_CHIPS = ['Winter 2026', 'Spring 2026', 'Summer 2026', 'Autumn 2026', '2027', 'Still deciding'];
 const TYPE_CHIPS = ['Pre-Wedding', 'Wedding Day', 'Both', 'Other'];
@@ -14,6 +15,9 @@ export default function Contact() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState(null);
+  const [botField, setBotField] = useState('');
 
   const set = (k, v) => {
     setForm((f) => ({ ...f, [k]: v }));
@@ -31,12 +35,25 @@ export default function Contact() {
     return e;
   };
 
-  const onSubmit = (ev) => {
+  const onSubmit = async (ev) => {
     ev.preventDefault();
     const e = validate();
     setErrors(e);
     setTouched(Object.fromEntries(Object.keys(form).map((k) => [k, true])));
-    if (Object.keys(e).length === 0) setSubmitted(true);
+    if (Object.keys(e).length > 0) return;
+
+    setSendError(null);
+    setSending(true);
+    try {
+      await sendEnquiry({ ...form, botcheck: botField });
+      setSubmitted(true);
+    } catch (err) {
+      setSendError(
+        "We couldn't send your note just now. Please try again in a moment — or reach us on WhatsApp and we'll pick it up straight away."
+      );
+    } finally {
+      setSending(false);
+    }
   };
 
   const fieldCls = (k) => `field ${touched[k] && errors[k] ? 'error' : ''}`;
@@ -60,6 +77,8 @@ export default function Contact() {
                 setSubmitted(false);
                 setForm({ firstName: '', partnerName: '', email: '', phone: '', date: '', venue: '', type: '', story: '' });
                 setTouched({});
+                setSendError(null);
+                setBotField('');
               }}>
                 Send another <span className="ar">→</span>
               </button>
@@ -121,6 +140,17 @@ export default function Contact() {
           </Reveal>
 
           <Reveal as="form" className="form" delay={0.1} onSubmit={onSubmit} noValidate>
+            {/* Honeypot: hidden from people, catnip for bots. Filled = ignored server-side. */}
+            <input
+              type="text"
+              name="botcheck"
+              tabIndex={-1}
+              autoComplete="off"
+              value={botField}
+              onChange={(e) => setBotField(e.target.value)}
+              aria-hidden="true"
+              style={{ position: 'absolute', left: '-5000px', width: 1, height: 1, opacity: 0 }}
+            />
             <div className="form__row">
               <div className={fieldCls('firstName')}>
                 <label>Your name</label>
@@ -189,8 +219,8 @@ export default function Contact() {
             </div>
 
             <div className="form__actions">
-              <button type="submit" className="btn">
-                Send the note <span className="ar">→</span>
+              <button type="submit" className="btn" disabled={sending} aria-busy={sending}>
+                {sending ? 'Sending…' : <>Send the note <span className="ar">→</span></>}
               </button>
               <a
                 className="btn btn--ghost"
@@ -201,6 +231,11 @@ export default function Contact() {
                 or WhatsApp us <span className="ar">→</span>
               </a>
             </div>
+            {sendError && (
+              <p className="err-msg" role="alert" style={{ marginTop: 16 }}>
+                {sendError}
+              </p>
+            )}
           </Reveal>
         </div>
       </div>

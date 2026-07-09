@@ -37,31 +37,30 @@ export const FILTERS = [
 ];
 
 export const HERO_SLIDES = [
-  { id: "hero-couple", alt: "Couple at dusk, wrapped in warm light" },
-  { id: "p18",         alt: "Bengali bride in gold against candlelight" },
-  { id: "p05",         alt: "Couple running near the Howrah Bridge" },
-  { id: "p15",         alt: "Couple on a heritage stairwell, North Kolkata" },
-  { id: "p10",         alt: "A red saree spun at Princep Ghat" },
+  { id: "hero-veil",      alt: "Bride beneath a red veil, glowing in candlelight" },
+  { id: "hero-bride",     alt: "Bride in a red Banarasi saree and gold jewellery", focus: "50% 17%" },
+  { id: "hero-courtyard", portrait: "hero-courtyard-portrait", portraitOpts: { pad: true, ar: "0.57" }, alt: "Couple on the steps of a North Kolkata heritage mansion" },
+  { id: "hero-grid",      alt: "Pritam & Priyanka — a pre-wedding story in red and white" },
 ];
 
 export const STORIES = [
   {
-    id: "howrah",
-    couple: "Aditi & Soumya",
-    place: "Princep Ghat · Kolkata",
-    when: "November 2024",
+    id: "yujanti-subham",
+    couple: "Yujanti & Shubham",
+    place: "Streets of Kolkata",
+    when: "September 2025",
     type: "Pre-Wedding",
     cover: "p05",
     excerpt: "A morning that began with mist on the Hooghly and ended with sunflowers in her hands, somewhere near the Howrah.",
     facts: [
-      ["Couple", "Aditi & Soumya"],
+      ["Couple", "Yujanti & Shubham"],
       ["Place",  "Princep Ghat, Kolkata"],
       ["Season", "Late Autumn, 2024"],
       ["Type",   "Pre-Wedding · Half Day"],
     ],
     narrative: [
-      "We started before the city was properly awake. Aditi wanted the Hooghly. Soumya wanted the bridge. They settled on both, on the same morning, in a single quiet hour of light before the boats came in.",
-      "What I love about Kolkata in November is the haze. It softens everything — the iron of the Howrah, the steps of the ghat, even the pigeons that lift, perfectly on cue, when a couple decides to run. Aditi laughed almost the entire time. Soumya watched her, mostly. I just stayed out of the way.",
+      "We started before the city was properly awake. Yujanti wanted the Hooghly. Shubham wanted the bridge. They settled on both, on the same morning, in a single quiet hour of light before the boats came in.",
+      "What I love about Kolkata in November is the haze. It softens everything — the iron of the Howrah, the steps of the ghat, even the pigeons that lift, perfectly on cue, when a couple decides to run. Yujanti laughed almost the entire time. Shubham watched her, mostly. I just stayed out of the way.",
     ],
     gallery: ["p05", "p10", "p21", "p09", "p25"],
   },
@@ -110,7 +109,7 @@ export const STORIES = [
 export const TESTIMONIALS = [
   {
     q: "We forgot the camera was there. Then the photos arrived and we recognised every feeling we'd had that day — and a few we'd missed.",
-    a: "Aditi & Soumya · Pre-Wedding, Kolkata",
+    a: "Yujanti & Shubham · Pre-Wedding, Kolkata",
   },
   {
     q: "Patient, quiet, somehow everywhere at once. The Howrah shoot felt like our story, not a generic Kolkata postcard. We've already booked them for the wedding.",

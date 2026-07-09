@@ -11,9 +11,12 @@ export const MAX_W = 2048;
  * opts.fill crops to opts.ar (e.g. "4:5") with face-aware gravity.
  * opts.blur produces a ~1 kB LQIP placeholder at the same crop.
  */
-export function cld(name, { w, ar, fill, blur, q = 'auto:best' } = {}) {
+export function cld(name, { w, ar, fill, pad, blur, q = 'auto:best' } = {}) {
   let t = blur ? 'f_auto,q_1' : `f_auto,q_${q}`;
   if (fill && ar) t += `,c_fill,g_auto,ar_${ar}`;
+  // pad: add sacrificial headroom on top (dark, matching the hero scrim) so the
+  // hero's ~10% overscan crops the pad, not content sitting at the frame's edge.
+  else if (pad && ar) t += `,c_pad,g_south,b_rgb:080706,ar_${ar}`;
   if (w) t += `,w_${Math.min(w, MAX_W)}`;
   if (blur) t += ',e_blur:1000';
   return `${BASE}/${t}/foreverknots/${name}.jpg`;

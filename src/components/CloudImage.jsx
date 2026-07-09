@@ -12,6 +12,12 @@ export default function CloudImage({
   placeholder = true,
   className,
   style,
+  // Art direction: an alternate Cloudinary name served to narrow screens (a
+  // portrait crop of the same frame). Omitted → a plain <img>, unchanged.
+  portrait,
+  portraitOpts,
+  portraitWidths = [540, 768, 1080, 1350],
+  portraitMedia = '(max-width: 768px)',
   ...rest
 }) {
   const opts = { ar, fill, q };
@@ -23,7 +29,7 @@ export default function CloudImage({
         backgroundPosition: 'center',
       }
     : undefined;
-  return (
+  const img = (
     <img
       src={cld(name, { ...opts, w: widths[widths.length - 1] })}
       srcSet={srcSet(name, widths, opts)}
@@ -38,5 +44,14 @@ export default function CloudImage({
       style={lqip || style ? { ...lqip, ...style } : undefined}
       {...rest}
     />
+  );
+  if (!portrait) return img;
+  // <img> stays the wide/default source (and the one the browser preloads);
+  // narrow screens pick the portrait <source> before any download starts.
+  return (
+    <picture>
+      <source media={portraitMedia} srcSet={srcSet(portrait, portraitWidths, { ...opts, ...portraitOpts })} sizes={sizes} />
+      {img}
+    </picture>
   );
 }
