@@ -18,7 +18,7 @@ const NAV_ITEMS = [
   { type: 'section', id: 'contact', label: 'Contact' },
 ];
 
-/* Separate component so AnimatePresence's direct child carries no ref —
+/* Separate component so AnimatePresence's direct child carries no ref:
  * motion reads the child's ref prop internally, which React 18 warns on. */
 function MobileOverlay({ go, onClose }) {
   const ref = useRef(null);

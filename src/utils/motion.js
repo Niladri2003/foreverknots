@@ -1,4 +1,4 @@
-/* Shared motion vocabulary — two eases, a handful of variants.
+/* Shared motion vocabulary: two eases, a handful of variants.
  * EASE for workhorse fades/moves, LUXE (expo-out) for hero/type moments. */
 
 export const EASE = [0.22, 0.61, 0.36, 1];

@@ -4,7 +4,7 @@ import CloudImage from './CloudImage';
 import { cld } from '../utils/cloudinary';
 import { LUXE } from '../utils/motion';
 
-/* Presentational Ken Burns crossfade — timing lives in Hero.
+/* Presentational Ken Burns crossfade; timing lives in Hero.
  * Scale outlives the 1.4s opacity fade so drift never visibly stops. */
 export default function HeroSlideshow({ slides, index, interval = 5500 }) {
   const reduced = useReducedMotion();
@@ -13,7 +13,7 @@ export default function HeroSlideshow({ slides, index, interval = 5500 }) {
     if (reduced) return;
     const t = setTimeout(() => {
       const next = slides[(index + 1) % slides.length];
-      // Preload what the <picture> will actually request — the portrait crop on
+      // Preload what the <picture> will actually request: the portrait crop on
       // narrow screens (breakpoint must match CloudImage's portraitMedia).
       const mobile = next.portrait && window.matchMedia('(max-width: 768px)').matches;
       const img = new Image();
@@ -49,7 +49,7 @@ export default function HeroSlideshow({ slides, index, interval = 5500 }) {
           eager={index === 0}
           style={slide.focus ? { objectPosition: slide.focus } : undefined}
           // Retire the static boot image (index.html) the instant this real frame has
-          // decoded AND painted (decode + two frames) — never sooner, or an overlay
+          // decoded AND painted (decode + two frames), never sooner, or an overlay
           // boot image on repeat visits would flash the load gap. Removing it does not
           // retract the LCP it already recorded.
           onLoad={

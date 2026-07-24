@@ -13,7 +13,7 @@ export const contactEndpointReady = () => /^https:\/\//.test(ENDPOINT);
  */
 export async function sendEnquiry(payload) {
   if (!contactEndpointReady()) {
-    console.warn('[contact] VITE_CONTACT_ENDPOINT is not set — enquiry not delivered.');
+    console.warn('[contact] VITE_CONTACT_ENDPOINT is not set, enquiry not delivered.');
     throw new Error('endpoint-not-configured');
   }
 

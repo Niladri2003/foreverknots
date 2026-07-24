@@ -31,7 +31,7 @@ function StoryPanel({ story, onClose, openLightbox }) {
       tabIndex={-1}
       role="dialog"
       aria-modal="true"
-      aria-label={`${story.couple} — wedding story`}
+      aria-label={`${story.couple}, wedding story`}
       initial={{ y: '100%' }}
       animate={{ y: 0, transition: { duration: 0.7, ease: LUXE } }}
       exit={{ y: '100%', transition: { duration: 0.5, ease: LUXE } }}
@@ -91,7 +91,7 @@ function StoryPanel({ story, onClose, openLightbox }) {
               >
                 <CloudImage
                   name={name}
-                  alt={`${story.couple} — frame ${i + 1}`}
+                  alt={`${story.couple}, frame ${i + 1}`}
                   sizes={GALLERY_SIZES}
                   fill
                   ar={GALLERY_AR[i % 5]}

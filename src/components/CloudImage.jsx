@@ -21,8 +21,10 @@ export default function CloudImage({
   ...rest
 }) {
   const opts = { ar, fill, q };
+  // Passthrough assets (local /photos, absolute URLs) have no cheap blur variant.
+  const passthrough = /^(https?:|\/)/.test(name);
   // Blurred LQIP behind the streaming image; skipped for preloaded hero frames
-  const lqip = placeholder && !eager
+  const lqip = placeholder && !eager && !passthrough
     ? {
         backgroundImage: `url("${cld(name, { ...opts, w: 32, blur: true })}")`,
         backgroundSize: 'cover',

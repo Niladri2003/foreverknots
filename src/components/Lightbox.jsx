@@ -11,7 +11,7 @@ const frameVariants = {
   exit: (dir) => ({ opacity: 0, x: dir * -36, transition: { duration: 0.3, ease: 'easeIn' } }),
 };
 
-/* Separate component so AnimatePresence's direct child carries no ref —
+/* Separate component so AnimatePresence's direct child carries no ref:
  * motion reads the child's ref prop internally, which React 18 warns on. */
 function LightboxShell({ items, index, dir, onClose, onPrev, onNext }) {
   const rootRef = useRef(null);

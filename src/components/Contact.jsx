@@ -30,8 +30,8 @@ export default function Contact() {
     if (!form.firstName.trim()) e.firstName = "We'd love your name.";
     if (!form.email.trim()) e.email = "We'll need an email to reply.";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "That doesn't look quite right.";
-    if (!form.date) e.date = 'Pick a season — even an approximate one.';
-    if (!form.story.trim() || form.story.trim().length < 20) e.story = 'A few sentences, please — anything about the day.';
+    if (!form.date) e.date = 'Pick a season, even an approximate one.';
+    if (!form.story.trim() || form.story.trim().length < 20) e.story = 'A few sentences, please. Anything about the day.';
     return e;
   };
 
@@ -49,7 +49,7 @@ export default function Contact() {
       setSubmitted(true);
     } catch (err) {
       setSendError(
-        "We couldn't send your note just now. Please try again in a moment — or reach us on WhatsApp and we'll pick it up straight away."
+        "We couldn't send your note just now. Please try again in a moment, or reach us on WhatsApp and we'll pick it up straight away."
       );
     } finally {
       setSending(false);
@@ -69,7 +69,7 @@ export default function Contact() {
             </h3>
             <p className="lead" style={{ margin: '0 auto' }}>
               We read every message ourselves. You'll hear back within two
-              working days — usually with a few warm questions and a link to
+              working days, usually with a few warm questions and a link to
               book a video call.
             </p>
             <div style={{ marginTop: 32 }}>
@@ -100,7 +100,7 @@ export default function Contact() {
             </h2>
             <p className="lead">
               Tell us a little about your day. The form takes about three
-              minutes. Every message is read by us — there is no assistant,
+              minutes. Every message is read by us. There is no assistant,
               and never a template reply.
             </p>
             <div className="contact__details">
@@ -119,10 +119,6 @@ export default function Contact() {
               <div className="row">
                 <span className="k">Hours</span>
                 <span className="v">{INFO.hours}</span>
-              </div>
-              <div className="row">
-                <span className="k">Travelling</span>
-                <span className="v">{INFO.serves.join(' · ')}</span>
               </div>
             </div>
             <div className="contact__social">

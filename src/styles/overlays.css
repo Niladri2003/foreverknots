@@ -51,7 +51,7 @@
 .lightbox__arrow.next { right: 24px; }
 @media (max-width: 768px) { .lightbox__arrow { display: none; } }
 
-/* STORY MODAL — transformed fixed wrapper + inner scroller, so the close
+/* STORY MODAL: transformed fixed wrapper + inner scroller, so the close
  * button stays put while the panel scrolls */
 .story-modal-root { position: fixed; inset: 0; z-index: var(--z-story); }
 .story-modal {

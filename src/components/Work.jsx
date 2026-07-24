@@ -3,8 +3,8 @@ import { PHOTOS } from '../data';
 import PhotoGrid from './PhotoGrid';
 import Reveal from './Reveal';
 
-/* Curated homepage selection — the full, filterable archive lives at /gallery */
-const CURATED = PHOTOS.slice(0, 8);
+/* Curated homepage selection; the full, filterable archive lives at /gallery */
+const CURATED = PHOTOS.slice(0, 9);
 
 export default function Work({ openLightbox }) {
   const navigate = useNavigate();
@@ -14,14 +14,14 @@ export default function Work({ openLightbox }) {
       <div className="wrap">
         <div className="work__head">
           <Reveal>
-            <div className="mono">Selected work · 2023 – 2026</div>
+            <div className="mono">Selected work · 2023 - 2026</div>
             <h2 className="sec-head__title" style={{ marginTop: 12 }}>
               The <em>archive</em>
             </h2>
           </Reveal>
           <Reveal as="p" className="sec-head__lead" delay={0.1}>
-            Eight frames we keep coming back to. The full archive — every
-            pre-wedding, ritual, portrait and detail — lives in the gallery.
+            Nine frames we keep coming back to. The full archive, every
+            pre-wedding, ritual, portrait and detail, lives in the gallery.
           </Reveal>
         </div>
 

@@ -41,13 +41,13 @@ export default function About() {
           <Reveal className="sec-head__meta">
             <div className="mono">On the photographer</div>
             <h2 className="sec-head__title">
-              Hello — we're a <em>small studio</em><br />out of Kolkata.
+              Hello, we're a <em>small studio</em><br />out of Kolkata.
             </h2>
           </Reveal>
           <Reveal as="p" className="sec-head__lead" delay={0.1}>
             foreverknots is a five-year-old wedding photography practice. We work
-            in pairs — one camera close in, one stepped back — and we believe
-            the best wedding photographs are the ones nobody noticed being taken.
+            in pairs, one camera close in, one stepped back. We believe the best
+            wedding photographs are the ones nobody noticed being taken.
           </Reveal>
         </div>
 
@@ -64,13 +64,13 @@ export default function About() {
           <Reveal className="about__body" delay={0.2}>
             <p>
               We started in 2020, the year nobody got married. The weddings we
-              did photograph that year were small — five guests, two photographers,
+              did photograph that year were small: five guests, two photographers,
               a quiet ceremony in a sitting room. We learned to work without an
               audience. We never quite stopped.
             </p>
             <p>
-              Today we photograph across Bengal and well beyond — Bhubaneswar,
-              Ranchi, Varanasi, Kashmir — for couples who want something more
+              Today we photograph across Bengal and well beyond, in Bhubaneswar,
+              Ranchi, Varanasi and Kashmir, for couples who want something more
               honest than a posed reel. Our work is documentary first, with a
               few deliberate portraits when the light is generous. We shoot on
               digital, finish in a slow, film-leaning palette, and deliver an
@@ -81,7 +81,7 @@ export default function About() {
               It's a long, slightly chaotic, deeply specific Tuesday. We are
               here to remember it for you.
             </p>
-            <div className="about__sig">— the foreverknots studio</div>
+            <div className="about__sig">the foreverknots studio</div>
 
             <div className="about__stats">
               <div className="about__stat">

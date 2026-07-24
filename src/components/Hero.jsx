@@ -41,7 +41,7 @@ export default function Hero({ ready }) {
         transition={{ duration: 1, delay: 0.9 }}
       >
         <div className="mono">foreverknots · est. 2020 · Kolkata</div>
-        <div className="mono">№ 01 — A Wedding-Day Studio</div>
+        <div className="mono">№ 01 · A Wedding-Day Studio</div>
       </m.div>
 
       <m.div
@@ -69,7 +69,7 @@ export default function Hero({ ready }) {
           </h1>
           {/* <m.p className="hero__sub" variants={fadeUp}>
             A small wedding-photography studio out of Kolkata. We photograph the
-            quiet half-second between things — the look just before the vow,
+            quiet half-second between things: the look just before the vow,
             the laugh in the middle of the haldi, the moment your grandmother
             holds your face.
           </m.p> */}
@@ -97,7 +97,7 @@ export default function Hero({ ready }) {
           </div>
           <div className="hero__dial">
             <div className="hero__count">
-              {String(idx + 1).padStart(2, '0')} — {String(HERO_SLIDES.length).padStart(2, '0')}
+              {String(idx + 1).padStart(2, '0')} / {String(HERO_SLIDES.length).padStart(2, '0')}
             </div>
             <div className="hero__track">
               <m.div

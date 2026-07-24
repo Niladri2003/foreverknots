@@ -6,7 +6,7 @@ export default function Preloader({ onDone }) {
   useEffect(() => {
     try { sessionStorage.setItem('fk-seen', '1'); } catch { /* private mode */ }
     // The word finishes rising at ~1.0s; dismiss right after so the intro reads
-    // without dead hold. (LCP no longer depends on this — the boot hero paints first.)
+    // without dead hold. (LCP no longer depends on this; the boot hero paints first.)
     const t = setTimeout(onDone, 1100);
     return () => clearTimeout(t);
   }, [onDone]);
