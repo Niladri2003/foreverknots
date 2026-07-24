@@ -23,6 +23,16 @@ const FROM        = process.env.CONTACT_FROM || 'contact@foreverknots.studio';
 const TO          = process.env.CONTACT_TO || FROM;
 const STUDIO_NAME = 'foreverknots';
 
+// Log the resolved config once per cold start. Never logs the actual keys —
+// only whether they're present, so a missing env var is obvious in the logs.
+console.log('[contact] init', {
+  region: REGION,
+  from: FROM,
+  to: TO,
+  hasAccessKeyId: Boolean(process.env.SES_ACCESS_KEY_ID),
+  hasSecretKey: Boolean(process.env.SES_SECRET_ACCESS_KEY),
+});
+
 const ses = new SESClient({
   region: REGION,
   // Explicit keys so we never depend on the Lambda runtime's own AWS role
@@ -33,8 +43,16 @@ const ses = new SESClient({
   },
 });
 
-export const handler = async (event) => {
+export const handler = async (event, context) => {
+  const rid = (context && context.awsRequestId) || '-';
+  const log = (...a) => console.log('[contact]', rid, ...a);
+  const warn = (...a) => console.warn('[contact]', rid, ...a);
+  const t0 = Date.now();
+
+  log('request', event.httpMethod);
+
   if (event.httpMethod !== 'POST') {
+    warn('rejected: method not allowed');
     return json(405, { ok: false, error: 'method-not-allowed' });
   }
 
@@ -42,17 +60,26 @@ export const handler = async (event) => {
   try {
     data = JSON.parse(event.body || '{}');
   } catch {
+    warn('rejected: body is not valid JSON');
     return json(400, { ok: false, error: 'bad-json' });
   }
 
   // Honeypot: bots fill the hidden field. Pretend success, send nothing.
-  if (data.botcheck) return json(200, { ok: true });
+  if (data.botcheck) {
+    log('honeypot tripped — dropping silently');
+    return json(200, { ok: true });
+  }
 
   const name  = String(data.firstName || '').trim();
   const email = String(data.email || '').trim();
-  if (!name || !isEmail(email)) return json(400, { ok: false, error: 'missing-fields' });
+  if (!name || !isEmail(email)) {
+    warn('rejected: missing fields', { hasName: Boolean(name), hasValidEmail: isEmail(email) });
+    return json(400, { ok: false, error: 'missing-fields' });
+  }
 
   const partner = String(data.partnerName || '').trim();
+  log('enquiry received', { name, partner: partner || undefined, email, type: data.type || undefined });
+
   const rows = [
     ['Name', data.firstName],
     ['Partner', data.partnerName],
@@ -66,7 +93,8 @@ export const handler = async (event) => {
 
   // 1) Notify the studio — this is the one that MUST succeed (it's the lead).
   try {
-    await ses.send(new SendEmailCommand({
+    log('sending studio notification', { to: TO, from: FROM });
+    const res = await ses.send(new SendEmailCommand({
       Source: `${STUDIO_NAME} · website <${FROM}>`,
       Destination: { ToAddresses: [TO] },
       ReplyToAddresses: [email],
@@ -75,15 +103,18 @@ export const handler = async (event) => {
         Body: { Text: { Data: rows.map((r) => `${r[0]}: ${r[1]}`).join('\n'), Charset: 'UTF-8' } },
       },
     }));
+    log('studio notification sent', { messageId: res.MessageId });
   } catch (err) {
-    console.error('[contact] studio notification failed:', err);
+    console.error('[contact]', rid, 'studio notification FAILED:', errInfo(err));
+    console.error(err);
     return json(502, { ok: false, error: 'send-failed' });
   }
 
   // 2) Thank the sender — best-effort. If it fails, the studio has already been
   // notified, so we still report success to the couple.
   try {
-    await ses.send(new SendEmailCommand({
+    log('sending thank-you', { to: email });
+    const res = await ses.send(new SendEmailCommand({
       Source: `${STUDIO_NAME} <${FROM}>`,
       Destination: { ToAddresses: [email] },
       ReplyToAddresses: [TO],
@@ -95,10 +126,13 @@ export const handler = async (event) => {
         },
       },
     }));
+    log('thank-you sent', { messageId: res.MessageId });
   } catch (err) {
-    console.error('[contact] thank-you failed (studio was notified):', err);
+    console.error('[contact]', rid, 'thank-you FAILED (studio was notified):', errInfo(err));
+    console.error(err);
   }
 
+  log('done ok', { ms: Date.now() - t0 });
   return json(200, { ok: true });
 };
 
@@ -107,6 +141,15 @@ function json(statusCode, obj) {
     statusCode,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(obj),
+  };
+}
+
+// Compact, log-friendly summary of an AWS SDK / SES error.
+function errInfo(err) {
+  return {
+    name: err && err.name,
+    message: err && err.message,
+    httpStatus: err && err.$metadata && err.$metadata.httpStatusCode,
   };
 }
 
