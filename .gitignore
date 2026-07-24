@@ -10,3 +10,8 @@ lib64
 include
 pyvenv.cfg
 share
+.playwright-mcp
+
+# Raw source photo dumps (Facebook downloads, camera exports) — kept locally, not web assets
+FB_IMG_*
+24n-*.jpg
