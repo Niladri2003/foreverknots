@@ -24,7 +24,7 @@ export default function GalleryPage({ openLightbox }) {
                 <span className="mask"><m.span variants={maskLine}>we <em>kept</em>.</m.span></span>
               </h1>
               <p className="sec-head__lead gallery-page__lead">
-                The complete foreverknots archive — pre-weddings, rituals,
+                The complete foreverknots archive: pre-weddings, rituals,
                 portraits and details, from Kolkata to Kashmir. New frames
                 join after every season.
               </p>

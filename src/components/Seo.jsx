@@ -8,11 +8,11 @@ import { cld } from '../utils/cloudinary';
  * description / canonical for every URL, which would make /gallery and /stories/:id read
  * as duplicates of the homepage. Googlebot renders JS, so updating the head per route
  * lets each page index distinctly. (Non-JS social scrapers still read the static tags in
- * index.html — full per-route social cards would need prerendering/SSR.) */
+ * index.html; full per-route social cards would need prerendering/SSR.) */
 
 const LOGO_URL = 'https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto/foreverknots/logo.png';
 const HOME_DESC =
-  'Cinematic wedding photography out of Kolkata. Documentary, slow, and printed on paper — pre-weddings, Bengali weddings and beyond. Tying knots since 2020.';
+  'Cinematic wedding photography out of Kolkata. Documentary, slow, and printed on paper. Pre-weddings, Bengali weddings and beyond. Tying knots since 2020.';
 
 const ogImage = (name) => cld(name, { w: 1200, fill: true, ar: '1.91:1' });
 
@@ -21,7 +21,7 @@ const business = {
   '@type': 'Photographer',
   name: INFO.brand,
   description:
-    'Cinematic wedding photography studio out of Kolkata — pre-weddings, Bengali weddings, candid rituals and heirloom albums. Tying knots since 2020.',
+    'Cinematic wedding photography studio out of Kolkata. Pre-weddings, Bengali weddings, candid rituals and heirloom albums. Tying knots since 2020.',
   url: INFO.site,
   email: INFO.email,
   telephone: `+${INFO.phone.replace(/\D/g, '')}`,
@@ -65,7 +65,7 @@ function metaFor(pathname, storyId) {
   const story = storyId ? STORIES.find((s) => s.id === storyId) : null;
   if (story) {
     return {
-      title: `${story.couple} — ${story.type}, ${story.place} · foreverknots`,
+      title: `${story.couple} · ${story.type}, ${story.place} · foreverknots`,
       description: story.excerpt,
       path: `/stories/${story.id}`,
       image: ogImage(story.cover),
@@ -73,15 +73,15 @@ function metaFor(pathname, storyId) {
   }
   if (pathname.startsWith('/gallery')) {
     return {
-      title: 'The Gallery — foreverknots · Wedding Photography, Kolkata',
+      title: 'The Gallery · foreverknots · Wedding Photography, Kolkata',
       description:
-        'The full foreverknots archive — pre-weddings, Bengali weddings, candid rituals, portraits and details, from Kolkata to Kashmir.',
+        'The full foreverknots archive: pre-weddings, Bengali weddings, candid rituals, portraits and details, from Kolkata to Kashmir.',
       path: '/gallery',
       image: ogImage('hero-couple'),
     };
   }
   return {
-    title: 'foreverknots — Wedding Photography, Kolkata',
+    title: 'foreverknots · Wedding Photography, Kolkata',
     description: HOME_DESC,
     path: '/',
     image: ogImage('hero-couple'),

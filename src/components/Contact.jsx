@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { INFO } from '../data';
 import Reveal from './Reveal';
 import { waLink } from '../utils/whatsapp';
+import { sendEnquiry } from '../utils/contact';
 
 const DATE_CHIPS = ['Winter 2026', 'Spring 2026', 'Summer 2026', 'Autumn 2026', '2027', 'Still deciding'];
 const TYPE_CHIPS = ['Pre-Wedding', 'Wedding Day', 'Both', 'Other'];
@@ -14,6 +15,9 @@ export default function Contact() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState(null);
+  const [botField, setBotField] = useState('');
 
   const set = (k, v) => {
     setForm((f) => ({ ...f, [k]: v }));
@@ -26,17 +30,30 @@ export default function Contact() {
     if (!form.firstName.trim()) e.firstName = "We'd love your name.";
     if (!form.email.trim()) e.email = "We'll need an email to reply.";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "That doesn't look quite right.";
-    if (!form.date) e.date = 'Pick a season — even an approximate one.';
-    if (!form.story.trim() || form.story.trim().length < 20) e.story = 'A few sentences, please — anything about the day.';
+    if (!form.date) e.date = 'Pick a season, even an approximate one.';
+    if (!form.story.trim() || form.story.trim().length < 20) e.story = 'A few sentences, please. Anything about the day.';
     return e;
   };
 
-  const onSubmit = (ev) => {
+  const onSubmit = async (ev) => {
     ev.preventDefault();
     const e = validate();
     setErrors(e);
     setTouched(Object.fromEntries(Object.keys(form).map((k) => [k, true])));
-    if (Object.keys(e).length === 0) setSubmitted(true);
+    if (Object.keys(e).length > 0) return;
+
+    setSendError(null);
+    setSending(true);
+    try {
+      await sendEnquiry({ ...form, botcheck: botField });
+      setSubmitted(true);
+    } catch (err) {
+      setSendError(
+        "We couldn't send your note just now. Please try again in a moment, or reach us on WhatsApp and we'll pick it up straight away."
+      );
+    } finally {
+      setSending(false);
+    }
   };
 
   const fieldCls = (k) => `field ${touched[k] && errors[k] ? 'error' : ''}`;
@@ -52,7 +69,7 @@ export default function Contact() {
             </h3>
             <p className="lead" style={{ margin: '0 auto' }}>
               We read every message ourselves. You'll hear back within two
-              working days — usually with a few warm questions and a link to
+              working days, usually with a few warm questions and a link to
               book a video call.
             </p>
             <div style={{ marginTop: 32 }}>
@@ -60,6 +77,8 @@ export default function Contact() {
                 setSubmitted(false);
                 setForm({ firstName: '', partnerName: '', email: '', phone: '', date: '', venue: '', type: '', story: '' });
                 setTouched({});
+                setSendError(null);
+                setBotField('');
               }}>
                 Send another <span className="ar">→</span>
               </button>
@@ -81,7 +100,7 @@ export default function Contact() {
             </h2>
             <p className="lead">
               Tell us a little about your day. The form takes about three
-              minutes. Every message is read by us — there is no assistant,
+              minutes. Every message is read by us. There is no assistant,
               and never a template reply.
             </p>
             <div className="contact__details">
@@ -101,10 +120,6 @@ export default function Contact() {
                 <span className="k">Hours</span>
                 <span className="v">{INFO.hours}</span>
               </div>
-              <div className="row">
-                <span className="k">Travelling</span>
-                <span className="v">{INFO.serves.join(' · ')}</span>
-              </div>
             </div>
             <div className="contact__social">
               <a href={INFO.instagram} target="_blank" rel="noopener noreferrer">
@@ -121,6 +136,17 @@ export default function Contact() {
           </Reveal>
 
           <Reveal as="form" className="form" delay={0.1} onSubmit={onSubmit} noValidate>
+            {/* Honeypot: hidden from people, catnip for bots. Filled = ignored server-side. */}
+            <input
+              type="text"
+              name="botcheck"
+              tabIndex={-1}
+              autoComplete="off"
+              value={botField}
+              onChange={(e) => setBotField(e.target.value)}
+              aria-hidden="true"
+              style={{ position: 'absolute', left: '-5000px', width: 1, height: 1, opacity: 0 }}
+            />
             <div className="form__row">
               <div className={fieldCls('firstName')}>
                 <label>Your name</label>
@@ -189,8 +215,8 @@ export default function Contact() {
             </div>
 
             <div className="form__actions">
-              <button type="submit" className="btn">
-                Send the note <span className="ar">→</span>
+              <button type="submit" className="btn" disabled={sending} aria-busy={sending}>
+                {sending ? 'Sending…' : <>Send the note <span className="ar">→</span></>}
               </button>
               <a
                 className="btn btn--ghost"
@@ -201,6 +227,11 @@ export default function Contact() {
                 or WhatsApp us <span className="ar">→</span>
               </a>
             </div>
+            {sendError && (
+              <p className="err-msg" role="alert" style={{ marginTop: 16 }}>
+                {sendError}
+              </p>
+            )}
           </Reveal>
         </div>
       </div>

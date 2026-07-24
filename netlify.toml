@@ -1,0 +1,9 @@
+# Netlify build + serverless function config.
+# The contact form POSTs to /.netlify/functions/contact (see netlify/functions/).
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"

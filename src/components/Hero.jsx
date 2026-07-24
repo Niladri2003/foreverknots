@@ -41,7 +41,7 @@ export default function Hero({ ready }) {
         transition={{ duration: 1, delay: 0.9 }}
       >
         <div className="mono">foreverknots · est. 2020 · Kolkata</div>
-        <div className="mono">№ 01 — A Wedding-Day Studio</div>
+        <div className="mono">№ 01 · A Wedding-Day Studio</div>
       </m.div>
 
       <m.div
@@ -67,12 +67,12 @@ export default function Hero({ ready }) {
             <span className="mask"><m.span variants={maskLine}>Love, kept</m.span></span>
             <span className="mask"><m.span variants={maskLine}>in <em>light</em>.</m.span></span>
           </h1>
-          <m.p className="hero__sub" variants={fadeUp}>
+          {/* <m.p className="hero__sub" variants={fadeUp}>
             A small wedding-photography studio out of Kolkata. We photograph the
-            quiet half-second between things — the look just before the vow,
+            quiet half-second between things: the look just before the vow,
             the laugh in the middle of the haldi, the moment your grandmother
             holds your face.
-          </m.p>
+          </m.p> */}
         </m.div>
 
         <m.div
@@ -86,10 +86,10 @@ export default function Hero({ ready }) {
               Based in
               <strong>Kolkata, India</strong>
             </div>
-            <div>
+            {/* <div>
               Travelling to
               <strong>Bhubaneswar · Ranchi · Varanasi · Kashmir</strong>
-            </div>
+            </div> */}
             <div>
               Now booking
               <strong>2026 / 2027</strong>
@@ -97,7 +97,7 @@ export default function Hero({ ready }) {
           </div>
           <div className="hero__dial">
             <div className="hero__count">
-              {String(idx + 1).padStart(2, '0')} — {String(HERO_SLIDES.length).padStart(2, '0')}
+              {String(idx + 1).padStart(2, '0')} / {String(HERO_SLIDES.length).padStart(2, '0')}
             </div>
             <div className="hero__track">
               <m.div

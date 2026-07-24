@@ -6,13 +6,18 @@ const WORDS = [
   'Pre-Weddings', 'Bengali Weddings', 'Destinations', 'Heirloom Albums',
 ];
 
+/* Each place is tied into one running thread: a gold hairline knotted
+ * between names, echoing the .thread signature. The tie follows every word
+ * (not all but the last) so the loop seam is knotted like any other join. */
 function Row({ ariaHidden }) {
   return (
-    <span aria-hidden={ariaHidden || undefined}>
+    <span className="marquee__row" aria-hidden={ariaHidden || undefined}>
       {WORDS.map((w, i) => (
-        <span key={i}>
-          {w}
-          {i < WORDS.length - 1 && <span className="marquee__dot" />}
+        <span className="marquee__item" key={i}>
+          <span className="marquee__word">{w}</span>
+          <span className="marquee__tie" aria-hidden="true">
+            <i className="marquee__knot" />
+          </span>
         </span>
       ))}
     </span>

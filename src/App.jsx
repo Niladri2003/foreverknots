@@ -6,7 +6,7 @@ import { STORIES } from './data';
 import Seo from './components/Seo';
 import Nav from './components/Nav';
 import Hero from './components/Hero';
-import Marquee from './components/Marquee';
+// import Marquee from './components/Marquee'; // parked: deciding what the strip should carry
 import Intro from './components/Intro';
 import Work from './components/Work';
 import Stories from './components/Stories';
@@ -32,7 +32,7 @@ function HomePage({ ready, openLightbox, openStory, jump }) {
   return (
     <main>
       <Hero ready={ready} />
-      <Marquee />
+      {/* <Marquee /> */}
       <Intro />
       <Work openLightbox={openLightbox} />
       <Stories openStory={openStory} />

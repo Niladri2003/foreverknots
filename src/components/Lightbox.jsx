@@ -11,7 +11,7 @@ const frameVariants = {
   exit: (dir) => ({ opacity: 0, x: dir * -36, transition: { duration: 0.3, ease: 'easeIn' } }),
 };
 
-/* Separate component so AnimatePresence's direct child carries no ref —
+/* Separate component so AnimatePresence's direct child carries no ref:
  * motion reads the child's ref prop internally, which React 18 warns on. */
 function LightboxShell({ items, index, dir, onClose, onPrev, onNext }) {
   const rootRef = useRef(null);
@@ -56,7 +56,7 @@ function LightboxShell({ items, index, dir, onClose, onPrev, onNext }) {
               else if (info.offset.x > 70 || info.velocity.x > 500) onPrev();
             }}
           >
-            <img src={cld(item.name, { w: 1600 })} alt={item.title} draggable={false} />
+            <img src={cld(item.name, { w: 2048 })} alt={item.title} draggable={false} />
             <figcaption className="lightbox__caption">
               <div className="t">{item.title}</div>
               <div className="s">{item.place} <span className="dot-sep" /> {item.year}</div>

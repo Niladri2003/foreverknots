@@ -15,7 +15,11 @@ body {
 img { display: block; max-width: 100%; }
 button { font: inherit; color: inherit; }
 a { color: inherit; text-decoration: none; }
+/* Lock scroll while an overlay (story modal, lightbox) is open. The page's
+ * real scroller is the <html> element (lenis), so locking body alone leaves a
+ * second, page-height scrollbar behind the overlay — lock html too. */
 body.lock { overflow: hidden; }
+html:has(body.lock) { overflow: hidden; }
 
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
@@ -66,7 +70,7 @@ body.lock { overflow: hidden; }
   .section { padding: var(--sp-6) 0; }
 }
 
-/* THREAD — the knot signature: a hairline of gold thread tied in the middle */
+/* THREAD: the knot signature, a hairline of gold thread tied in the middle */
 .thread { display: flex; align-items: center; justify-content: center; gap: 12px; }
 .thread::before, .thread::after { content: ""; height: 1px; flex: 1; }
 .thread::before { background: linear-gradient(90deg, transparent, var(--rule-gold)); }
@@ -78,7 +82,7 @@ body.lock { overflow: hidden; }
   transform: rotate(45deg);
 }
 
-/* FILM GRAIN — one fixed layer above everything */
+/* FILM GRAIN: one fixed layer above everything */
 .grain {
   position: fixed; inset: -50%;
   width: 200%; height: 200%;
