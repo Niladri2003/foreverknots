@@ -80,6 +80,15 @@ function metaFor(pathname, storyId) {
       image: ogImage('hero-couple'),
     };
   }
+  if (pathname.startsWith('/privacy')) {
+    return {
+      title: 'Privacy Policy · foreverknots',
+      description:
+        'How foreverknots collects, uses and protects the information you share through this site.',
+      path: '/privacy',
+      image: ogImage('hero-couple'),
+    };
+  }
   return {
     title: 'foreverknots · Wedding Photography, Kolkata',
     description: HOME_DESC,

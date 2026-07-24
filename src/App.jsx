@@ -25,6 +25,7 @@ import { usePrefersReducedMotion } from './hooks/usePrefersReducedMotion';
 // Overlays mount on first open, then stay mounted so their internal AnimatePresence
 // exit animations still run.
 const GalleryPage = lazy(() => import('./pages/GalleryPage'));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const Lightbox = lazy(() => import('./components/Lightbox'));
 const StoryModal = lazy(() => import('./components/StoryModal'));
 
@@ -78,8 +79,12 @@ function Site({ reduced }) {
   const [storyMounted, setStoryMounted] = useState(false);
   useEffect(() => { if (story) setStoryMounted(true); }, [story]);
 
-  // Scroll to top when switching between the home page and the gallery page
-  const page = location.pathname.startsWith('/gallery') ? 'gallery' : 'home';
+  // Scroll to top when switching between the home page and a standalone page
+  const page = location.pathname.startsWith('/gallery')
+    ? 'gallery'
+    : location.pathname.startsWith('/privacy')
+      ? 'privacy'
+      : 'home';
   useEffect(() => {
     if (lenis) lenis.scrollTo(0, { immediate: true });
     else window.scrollTo(0, 0);
@@ -126,6 +131,14 @@ function Site({ reduced }) {
           element={
             <Suspense fallback={<div aria-hidden="true" style={{ minHeight: '100vh' }} />}>
               <GalleryPage openLightbox={openLightbox} />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/privacy"
+          element={
+            <Suspense fallback={<div aria-hidden="true" style={{ minHeight: '100vh' }} />}>
+              <PrivacyPage />
             </Suspense>
           }
         />

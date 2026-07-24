@@ -312,6 +312,18 @@
 /* GALLERY PAGE */
 .gallery-page .section { padding-top: calc(96px + var(--sp-6)); }
 .gallery-page__head { margin-bottom: var(--sp-5); max-width: 980px; }
+
+/* Legal / prose pages (e.g. /privacy) */
+.legal-page .section { padding-top: calc(96px + var(--sp-6)); }
+.legal { max-width: 760px; margin: 0 auto; }
+.legal__title { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 5vw, 60px); line-height: 1.05; margin: 18px 0 10px; }
+.legal__updated { color: var(--ink-mute); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; margin: 0 0 40px; }
+.legal h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(20px, 2.6vw, 27px); margin: 44px 0 12px; }
+.legal p { color: var(--ink-soft); line-height: 1.75; font-size: 16px; margin: 0 0 16px; }
+.legal ul { margin: 0 0 16px; padding-left: 20px; display: grid; gap: 8px; }
+.legal li { color: var(--ink-soft); line-height: 1.7; font-size: 16px; }
+.legal a { color: var(--accent-warm); text-decoration: underline; text-underline-offset: 3px; }
+.legal strong { color: var(--ink); font-weight: 600; }
 .gallery-page__title {
   font-family: var(--serif);
   font-weight: 400;
@@ -483,3 +495,5 @@
 .foot__col li { font-size: 14px; cursor: pointer; transition: color .2s ease; color: var(--ink-soft); }
 .foot__col li:hover { color: var(--accent-warm); }
 .foot__bot { display: flex; justify-content: space-between; padding-top: 32px; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-mute); flex-wrap: wrap; gap: 16px; }
+.foot__legal button { background: none; border: 0; padding: 0; margin: 0; cursor: pointer; font: inherit; letter-spacing: inherit; text-transform: inherit; color: var(--ink-mute); transition: color .2s ease; }
+.foot__legal button:hover { color: var(--accent-warm); }
