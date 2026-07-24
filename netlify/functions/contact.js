@@ -64,10 +64,15 @@ export const handler = async (event, context) => {
     return json(400, { ok: false, error: 'bad-json' });
   }
 
-  // Honeypot: bots fill the hidden field. Pretend success, send nothing.
+  // Honeypot DISABLED for now — it was dropping genuine enquiries (browser
+  // autofill / password managers can fill the hidden field). The client still
+  // sends `botcheck`; we simply ignore it. To re-enable, drop submissions where
+  // it's set — ideally after making the field more autofill-proof first.
   if (data.botcheck) {
-    log('honeypot tripped — dropping silently');
-    return json(200, { ok: true });
+    log('honeypot field was set, but honeypot is disabled — processing anyway', {
+      email: String(data.email || ''),
+      botcheck: String(data.botcheck),
+    });
   }
 
   const name  = String(data.firstName || '').trim();
