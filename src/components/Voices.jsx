@@ -1,9 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { m, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { TESTIMONIALS } from '../data';
+import { TESTIMONIALS, STORIES } from '../data';
 import { EASE } from '../utils/motion';
 
 const INTERVAL = 7000;
+
+// Match each testimonial to the journal cover of the couple who wrote it, so the
+// backdrop is that couple's own photograph. The attribution reads
+// "Couple · Type, Place"; the name before the "·" is the STORIES couple key.
+const COVER_BY_COUPLE = Object.fromEntries(STORIES.map((s) => [s.couple, s.cover]));
+const coverFor = (attr) => COVER_BY_COUPLE[attr.split('·')[0].trim()] || null;
 
 export default function Voices() {
   const [i, setI] = useState(0);
@@ -20,6 +26,7 @@ export default function Voices() {
   }, [playing, i]);
 
   const t = TESTIMONIALS[i];
+  const photo = coverFor(t.a);
 
   return (
     <section
@@ -29,6 +36,25 @@ export default function Voices() {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
+      <div className="testi__bg" aria-hidden="true">
+        <AnimatePresence>
+          {photo && (
+            <m.img
+              key={i}
+              src={photo}
+              alt=""
+              className="testi__bg-img"
+              loading="lazy"
+              decoding="async"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: reduced ? 0 : 1.1, ease: EASE }}
+            />
+          )}
+        </AnimatePresence>
+      </div>
+      <div className="testi__scrim" aria-hidden="true" />
       <div className="testi__inner">
         <div className="mono">Kind words · received with thanks</div>
         <span className="testi__mark" aria-hidden="true">"</span>

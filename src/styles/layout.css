@@ -27,7 +27,7 @@
 .nav__brand em { font-style: italic; color: var(--accent-warm); font-weight: 400; }
 .nav__links {
   display: flex; gap: 32px;
-  font-size: 11px; letter-spacing: 0.22em;
+  font-size: 13px; letter-spacing: 0.22em;
   text-transform: uppercase;
   font-weight: 500;
 }
@@ -102,7 +102,7 @@
 }
 .mnav__foot a:hover { color: var(--accent-warm); }
 
-/* HERO — full-bleed cinema */
+/* HERO: full-bleed cinema */
 .hero {
   position: relative;
   min-height: 100svh;
@@ -201,13 +201,29 @@
   background: var(--bg-paper);
 }
 .marquee__track {
-  display: inline-flex; gap: 56px;
+  display: inline-flex;
   font-family: var(--serif); font-style: italic;
   font-size: 30px; color: var(--ink-soft);
   will-change: transform;
 }
-.marquee__track span { display: inline-flex; align-items: center; gap: 56px; padding-right: 56px; }
-.marquee__dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: .7; }
+.marquee__row, .marquee__item { display: inline-flex; align-items: center; }
+.marquee__word { padding: 0 22px; }
+
+/* The tie: a hairline of gold thread knotted between two places. Tails are
+ * deliberately uneven, the way a hand-tied knot leaves uneven ends. */
+.marquee__tie { display: inline-flex; align-items: center; flex: none; gap: 9px; }
+.marquee__tie::before, .marquee__tie::after {
+  content: ""; height: 1px; flex: none;
+  --tie-gold: color-mix(in oklab, var(--accent) 50%, transparent);
+}
+.marquee__tie::before { width: 18px; background: linear-gradient(90deg, transparent, var(--tie-gold)); }
+.marquee__tie::after  { width: 22px; background: linear-gradient(90deg, var(--tie-gold), transparent); }
+.marquee__knot {
+  width: 9px; height: 9px; flex: none;
+  border: 1px solid var(--accent);
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(45deg);
+}
 
 /* SECTION HEAD */
 .sec-head { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: end; margin-bottom: var(--sp-5); }
@@ -249,9 +265,16 @@
 .filters button:hover { color: var(--ink); border-color: var(--accent); }
 .filters button.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
+.masonry {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(12px, 1.6vw, 22px);
+}
+.masonry__col {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
   gap: clamp(12px, 1.6vw, 22px);
 }
 .tile {
@@ -275,23 +298,9 @@
 .tile__title { font-family: var(--serif); font-style: italic; font-size: 26px; line-height: 1; }
 .tile__meta { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.85; margin-top: 6px; }
 
-/* Editorial mosaic — pattern classes assigned from JS (index % 8) */
-.tile--v1 { grid-column: span 7;  aspect-ratio: 4/3; }
-.tile--v2 { grid-column: span 5;  aspect-ratio: 4/5; }
-.tile--v3 { grid-column: span 4;  aspect-ratio: 3/4; }
-.tile--v4 { grid-column: span 4;  aspect-ratio: 3/4; }
-.tile--v5 { grid-column: span 4;  aspect-ratio: 3/4; }
-.tile--v6 { grid-column: span 6;  aspect-ratio: 4/5; }
-.tile--v7 { grid-column: span 6;  aspect-ratio: 4/5; }
-.tile--v8 { grid-column: span 12; aspect-ratio: 21/9; }
-
-@media (max-width: 1024px) {
-  .tile--v1, .tile--v2, .tile--v3, .tile--v4, .tile--v5, .tile--v6, .tile--v7 { grid-column: span 6; aspect-ratio: 4/5; }
-  .tile--v8 { grid-column: span 12; aspect-ratio: 16/9; }
-}
+/* Editorial masonry: each tile's aspect-ratio is set inline from the photo's
+ * true ratio (see PhotoGrid), so images show uncropped and the wall packs tight. */
 @media (max-width: 768px) {
-  .tile--v1, .tile--v2, .tile--v3, .tile--v4, .tile--v5, .tile--v6, .tile--v7, .tile--v8 { grid-column: span 12; aspect-ratio: 4/3; }
-  .tile.is-portrait { aspect-ratio: 4/5; }
   .tile__overlay { opacity: 1; background: linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%); }
 }
 @media (hover: none) {
@@ -344,6 +353,21 @@
 }
 
 /* STORIES */
+.stories__nav { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 24px; }
+.stories__arrow {
+  width: 44px; height: 44px; flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--rule-gold); border-radius: 999px;
+  background: none; color: var(--ink); font-size: 15px; cursor: pointer;
+  transition: background .25s ease, color .25s ease, border-color .25s ease, opacity .25s ease;
+}
+.stories__arrow:hover:not(:disabled) { background: var(--accent); color: var(--bg-deep); border-color: var(--accent); }
+.stories__arrow:disabled { opacity: .28; cursor: default; }
+
+/* Both decks occupy the same cell so they can dissolve through each other. */
+.stories__stage { display: grid; }
+.stories__stage > * { grid-area: 1 / 1; }
+
 .stories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 3vw, 36px); }
 @media (max-width: 1024px) { .stories-grid { grid-template-columns: 1fr; gap: 56px; } }
 .story-card { cursor: pointer; transition: transform .5s cubic-bezier(.22,.61,.36,1); }
@@ -376,7 +400,13 @@
 
 /* VOICES */
 .testi { background: var(--bg-deep); color: var(--ink); padding: var(--sp-7) 0; overflow: hidden; position: relative; border-top: 1px solid var(--rule-gold); border-bottom: 1px solid var(--rule-gold); }
-.testi__inner { max-width: 980px; margin: 0 auto; padding: 0 var(--gutter); text-align: center; }
+/* The couple's own journal cover, dimmed, sits behind their words. */
+.testi__bg { position: absolute; inset: 0; z-index: 0; opacity: 0.2; pointer-events: none; }
+.testi__bg-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; filter: grayscale(0.15); }
+/* Vignette + centre veil so the quote stays legible over any frame. */
+.testi__scrim { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(130% 100% at 50% 42%, transparent 0%, color-mix(in oklab, var(--bg-deep) 45%, transparent) 62%, var(--bg-deep) 100%); }
+.testi__inner { position: relative; z-index: 2; max-width: 980px; margin: 0 auto; padding: 0 var(--gutter); text-align: center; }
 .testi__mark { font-family: var(--serif); font-style: italic; font-size: 100px; line-height: 0; color: var(--accent); display: block; margin: 32px 0 0; }
 .testi__quote { font-family: var(--serif); font-size: clamp(28px, 3.6vw, 48px); line-height: 1.25; font-weight: 400; margin: 24px 0 28px; min-height: 4em; text-wrap: balance; }
 .testi__quote em { font-style: italic; color: var(--accent-warm); }
@@ -394,7 +424,11 @@
 .contact__details { margin-top: 40px; display: grid; gap: 16px; font-size: 14px; }
 .contact__details .row { display: grid; grid-template-columns: 100px 1fr; gap: 16px; align-items: baseline; padding-top: 14px; border-top: 1px solid var(--rule); }
 .contact__details .row .k { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-mute); }
-.contact__details .row .v { color: var(--ink); font-family: var(--serif); font-style: italic; font-size: 20px; }
+.contact__details .row .v {
+  color: var(--ink); font-family: var(--sans);
+  font-size: 15px; line-height: 1.5; letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+}
 .contact__social { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 14px; }
 .contact__social a {
   display: inline-flex; align-items: center; gap: 10px;
