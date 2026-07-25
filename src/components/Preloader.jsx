@@ -5,6 +5,9 @@ import { LUXE } from '../utils/motion';
 export default function Preloader({ onDone }) {
   useEffect(() => {
     try { sessionStorage.setItem('fk-seen', '1'); } catch { /* private mode */ }
+    // This preloader is now painting over the static boot cover (index.html),
+    // which hid the boot-hero image until here — safe to drop it.
+    document.getElementById('boot-cover')?.remove();
     // The word finishes rising at ~1.0s; dismiss right after so the intro reads
     // without dead hold. (LCP no longer depends on this; the boot hero paints first.)
     const t = setTimeout(onDone, 1100);

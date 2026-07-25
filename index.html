@@ -61,9 +61,24 @@
         background: #080706;
         pointer-events: none;
       }
+      /* First-visit cover: sits over the boot image (same z-level, later in DOM) so
+         the intro reads text-then-image instead of the hero flashing before the
+         preloader mounts. A plain background div is not an LCP candidate, and LCP
+         ignores occlusion, so the boot image underneath still records LCP. The
+         inline script removes it up front on repeat visits / reduced motion (no
+         preloader those runs); otherwise the React preloader — same opaque dark —
+         mounts above it and removes it. */
+      .boot-cover {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background: #0E0C09;
+        pointer-events: none;
+      }
       /* App paints above the boot image, hiding it the moment the hero renders. */
       #root { position: relative; z-index: 1; }
     </style>
+    <noscript><style>.boot-cover { display: none; }</style></noscript>
   </head>
   <body>
     <!-- LCP element. Static, un-animated <img> that lives OUTSIDE #root so React never
@@ -84,18 +99,30 @@
         https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto:best,w_1920/foreverknots/hero-veil.jpg 1920w,
         https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto:best,w_2048/foreverknots/hero-veil.jpg 2048w"
     />
+    <div id="boot-cover" class="boot-cover" aria-hidden="true"></div>
     <script>
-      /* On a repeat visit there's no preloader to hide the brief hero-image load, so
-         promote the boot hero to an overlay (above the app), so it covers that window
-         showing the hero, and the React hero removes it (#boot-hero) the instant its
-         own copy has painted. On the first visit the preloader is the intended cover,
-         so the boot hero stays behind the app (z-index:0). A timeout is the last-resort
-         safety net. Removing it never retracts the LCP it already recorded. */
+      /* First visit: keep the cover so the boot image loads unseen and the preloader
+         word is the first thing shown; the React preloader removes it (#boot-cover).
+         Repeat visit: drop the cover immediately (no preloader that run) and promote
+         the boot hero to an overlay (above the app) so it hides the brief window
+         before the React hero paints its own copy and removes it (#boot-hero).
+         Reduced motion skips the preloader too, so it also drops the cover.
+         On sessionStorage failure assume "seen" — mirrors the app, which skips the
+         preloader then, so nothing would ever remove the cover. A timeout is the
+         last-resort safety net. Removing either never retracts a recorded LCP. */
       (function () {
-        var el = document.getElementById('boot-hero');
-        if (!el) return;
-        try { if (sessionStorage.getItem('fk-seen')) el.style.zIndex = '140'; } catch (e) {}
-        setTimeout(function () { if (el) { el.remove(); el = null; } }, 6000);
+        var img = document.getElementById('boot-hero');
+        var cover = document.getElementById('boot-cover');
+        var seen = true;
+        try { seen = !!sessionStorage.getItem('fk-seen'); } catch (e) {}
+        var reduced = false;
+        try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+        if (cover && (seen || reduced)) { cover.remove(); cover = null; }
+        if (img && seen) img.style.zIndex = '140';
+        setTimeout(function () {
+          if (img) { img.remove(); img = null; }
+          if (cover) { cover.remove(); cover = null; }
+        }, 6000);
       })();
     </script>
     <div id="root"></div>
