@@ -315,10 +315,10 @@ export const FAQS = [
     q: "Can we customise a package?",
     a: "Yes. Most couples start from The Signature and add events, an album, or a film. Tell us the shape of your days and we will send an exact quote in 24 hours.",
   },
-  {
-    q: "Do you photograph non-Bengali weddings?",
-    a: "Often. Marwari, Punjabi, Odia, Christian and court weddings so far. We arrive early, learn the rituals that matter to your family, and never interrupt one for a photo.",
-  },
+  // {
+  //   q: "Do you photograph non-Bengali weddings?",
+  //   a: "Often. Marwari, Punjabi, Odia, Christian and court weddings so far. We arrive early, learn the rituals that matter to your family, and never interrupt one for a photo.",
+  // },
 ];
 
 export const INSTA_PHOTOS = ["p04", "p13", "p07", "p20", "p24", "p12", "p02", "p22"];
