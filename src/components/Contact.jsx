@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { INFO } from '../data';
 import Reveal from './Reveal';
+import Turnstile from './Turnstile';
 import { waLink } from '../utils/whatsapp';
 import { sendEnquiry } from '../utils/contact';
 
@@ -18,6 +19,9 @@ export default function Contact() {
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState(null);
   const [botField, setBotField] = useState('');
+  // Cloudflare Turnstile token; tsKey remounts the widget to get a fresh one.
+  const [tsToken, setTsToken] = useState('');
+  const [tsKey, setTsKey] = useState(0);
 
   const set = (k, v) => {
     setForm((f) => ({ ...f, [k]: v }));
@@ -42,15 +46,23 @@ export default function Contact() {
     setTouched(Object.fromEntries(Object.keys(form).map((k) => [k, true])));
     if (Object.keys(e).length > 0) return;
 
+    if (!tsToken) {
+      setSendError('Please complete the verification below, then send again.');
+      return;
+    }
+
     setSendError(null);
     setSending(true);
     try {
-      await sendEnquiry({ ...form, botcheck: botField });
+      await sendEnquiry({ ...form, botcheck: botField, token: tsToken });
       setSubmitted(true);
     } catch (err) {
       setSendError(
         "We couldn't send your note just now. Please try again in a moment, or reach us on WhatsApp and we'll pick it up straight away."
       );
+      // Turnstile tokens are single-use — reset so the retry gets a fresh one.
+      setTsToken('');
+      setTsKey((k) => k + 1);
     } finally {
       setSending(false);
     }
@@ -79,6 +91,8 @@ export default function Contact() {
                 setTouched({});
                 setSendError(null);
                 setBotField('');
+                setTsToken('');
+                setTsKey((k) => k + 1);
               }}>
                 Send another <span className="ar">→</span>
               </button>
@@ -212,6 +226,10 @@ export default function Contact() {
                 {touched.story && errors.story && <span className="err-msg">{errors.story}</span>}
                 {!errors.story && <span className="hint">Read by us, not a team. No template replies.</span>}
               </div>
+            </div>
+
+            <div className="form__row form__row--single form__turnstile">
+              <Turnstile key={tsKey} onToken={setTsToken} />
             </div>
 
             <div className="form__actions">

@@ -82,6 +82,32 @@ export const handler = async (event, context) => {
     return json(400, { ok: false, error: 'missing-fields' });
   }
 
+  // Cloudflare Turnstile — verify the token server-side before we do anything.
+  // Secret lives only in the env (TURNSTILE_SECRET); never hard-coded.
+  const clientIp = event.headers['x-nf-client-connection-ip']
+    || (event.headers['x-forwarded-for'] || '').split(',')[0].trim()
+    || undefined;
+  try {
+    const verify = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        secret: process.env.TURNSTILE_SECRET || '',
+        response: String(data.token || ''),
+        ...(clientIp ? { remoteip: clientIp } : {}),
+      }),
+    });
+    const outcome = await verify.json();
+    if (outcome.success !== true) {
+      warn('turnstile verification failed', { codes: outcome['error-codes'] });
+      return json(403, { ok: false, error: 'captcha-failed' });
+    }
+    log('turnstile verified');
+  } catch (err) {
+    console.error('[contact]', rid, 'turnstile verify error:', errInfo(err));
+    return json(502, { ok: false, error: 'captcha-error' });
+  }
+
   const partner = String(data.partnerName || '').trim();
   log('enquiry received', { name, partner: partner || undefined, email, type: data.type || undefined });
 
