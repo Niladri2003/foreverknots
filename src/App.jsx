@@ -37,7 +37,7 @@ function HomePage({ ready, openLightbox, openStory, jump }) {
       <Intro />
       <Work openLightbox={openLightbox} />
       <Stories openStory={openStory} />
-      <Packages onJump={jump} />
+      {/* <Packages onJump={jump} /> */}
       <About />
       <Voices />
       <Faq />
