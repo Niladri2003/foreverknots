@@ -1,52 +1,20 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { m, useMotionValue, useSpring } from 'motion/react';
+import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 import CloudImage from './CloudImage';
 import { EASE } from '../utils/motion';
 
 /* Editorial masonry shared by the homepage archive and the gallery page.
- * Every photo keeps its true aspect ratio (no crop). Tiles are packed into
- * balanced columns by running height, so the wall stays gapless and each
- * frame's true crop matches what the lightbox shows. */
+ * Columns + balancing are handled by react-responsive-masonry; every photo
+ * keeps its true aspect ratio (aspectRatio on the tile, no crop), so each
+ * frame's shape matches what the lightbox shows. */
 const TILE_SIZES = '(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 33vw';
-
-// Responsive column count, matched to the CSS breakpoints in layout.css.
-function useColumnCount() {
-  const [cols, setCols] = useState(() => {
-    if (typeof window === 'undefined') return 3;
-    return window.innerWidth <= 600 ? 1 : window.innerWidth <= 1024 ? 2 : 3;
-  });
-  useEffect(() => {
-    const one = window.matchMedia('(max-width: 600px)');
-    const two = window.matchMedia('(max-width: 1024px)');
-    const update = () => setCols(one.matches ? 1 : two.matches ? 2 : 3);
-    one.addEventListener('change', update);
-    two.addEventListener('change', update);
-    return () => {
-      one.removeEventListener('change', update);
-      two.removeEventListener('change', update);
-    };
-  }, []);
-  return cols;
-}
-
-// Greedy shortest-column packing: preserves input order while balancing the
-// running height of each column (height per unit width = 1 / ratio).
-function toColumns(photos, n) {
-  const cols = Array.from({ length: n }, () => []);
-  const heights = new Array(n).fill(0);
-  for (const p of photos) {
-    let target = 0;
-    for (let i = 1; i < n; i++) if (heights[i] < heights[target]) target = i;
-    cols[target].push(p);
-    heights[target] += 1 / (p.ratio || 1);
-  }
-  return cols;
-}
+const GUTTER = 'clamp(12px, 1.6vw, 22px)';
+// Match the previous breakpoints: 1 col ≤600, 2 col 601–1024, 3 col ≥1025.
+const COLUMNS = { 0: 1, 601: 2, 1025: 3 };
 
 export default function PhotoGrid({ photos, lightboxPhotos, openLightbox }) {
   const pool = lightboxPhotos || photos;
-  const colCount = useColumnCount();
-  const columns = toColumns(photos, colCount);
 
   // "View →" label following the cursor, pointer devices only
   const [labelOn, setLabelOn] = useState(false);
@@ -71,38 +39,35 @@ export default function PhotoGrid({ photos, lightboxPhotos, openLightbox }) {
         onMouseEnter={() => setLabelOn(true)}
         onMouseLeave={() => setLabelOn(false)}
       >
-        {columns.map((col, ci) => (
-          <div className="masonry__col" key={ci}>
-            {col.map((p) => {
-              const i = photos.indexOf(p);
-              return (
-                <m.div
-                  key={p.id}
-                  className="tile"
-                  style={{ aspectRatio: String(p.ratio || 1) }}
-                  initial={{ opacity: 0, y: 24 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, ease: EASE, delay: Math.min(i * 0.04, 0.35) }}
-                  onClick={() => open(p)}
-                >
-                  <CloudImage
-                    name={p.id}
-                    alt={p.title}
-                    sizes={TILE_SIZES}
-                    q="auto:good"
-                    widths={[400, 640, 900, 1200, 1440]}
-                  />
-                  <div className="tile__overlay">
-                    <div className="tile__title">{p.title}</div>
-                    <div className="tile__meta">
-                      {p.place} <span className="dot-sep" /> {p.year}
-                    </div>
+        <ResponsiveMasonry columnsCountBreakPoints={COLUMNS}>
+          <Masonry gutter={GUTTER}>
+            {photos.map((p, i) => (
+              <m.div
+                key={p.id}
+                className="tile"
+                style={{ aspectRatio: String(p.ratio || 1) }}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: EASE, delay: Math.min(i * 0.04, 0.35) }}
+                onClick={() => open(p)}
+              >
+                <CloudImage
+                  name={p.id}
+                  alt={p.title}
+                  sizes={TILE_SIZES}
+                  q="auto:good"
+                  widths={[400, 640, 900, 1200, 1440]}
+                />
+                <div className="tile__overlay">
+                  <div className="tile__title">{p.title}</div>
+                  <div className="tile__meta">
+                    {p.place} <span className="dot-sep" /> {p.year}
                   </div>
-                </m.div>
-              );
-            })}
-          </div>
-        ))}
+                </div>
+              </m.div>
+            ))}
+          </Masonry>
+        </ResponsiveMasonry>
       </div>
 
       {fine.current && (

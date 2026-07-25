@@ -1,13 +1,16 @@
 import { useEffect, useRef } from 'react';
 import { m, AnimatePresence, useScroll, useTransform } from 'motion/react';
+import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 import CloudImage from './CloudImage';
 import Reveal from './Reveal';
 import { useBodyLock } from '../hooks/useBodyLock';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { LUXE } from '../utils/motion';
+import { ratioFor } from '../utils/photoRatios';
 
 const GALLERY_SIZES = '(max-width: 768px) 100vw, 50vw';
-const GALLERY_AR = ['4:3', '4:5', '4:5', '4:5', '21:9'];
+const GALLERY_GUTTER = 'clamp(12px, 1.6vw, 22px)';
+const GALLERY_COLUMNS = { 0: 1, 769: 2 };
 
 function StoryPanel({ story, onClose, openLightbox }) {
   const innerRef = useRef(null);
@@ -76,30 +79,33 @@ function StoryPanel({ story, onClose, openLightbox }) {
           </div>
 
           <div className="story-modal__gallery">
-            {story.gallery.map((name, i) => (
-              <Reveal
-                key={name + i}
-                className={`g-v${(i % 5) + 1}`}
-                root={innerRef}
-                delay={(i % 4) * 0.08}
-                onClick={() => {
-                  const items = story.gallery.map((n) => ({
-                    name: n, title: story.couple, place: story.place, year: story.when,
-                  }));
-                  openLightbox(items, i);
-                }}
-              >
-                <CloudImage
-                  name={name}
-                  alt={`${story.couple}, frame ${i + 1}`}
-                  sizes={GALLERY_SIZES}
-                  fill
-                  ar={GALLERY_AR[i % 5]}
-                  q="auto:good"
-                  widths={[480, 768, 1080, 1440]}
-                />
-              </Reveal>
-            ))}
+            <ResponsiveMasonry columnsCountBreakPoints={GALLERY_COLUMNS}>
+              <Masonry gutter={GALLERY_GUTTER}>
+                {story.gallery.map((name, i) => (
+                  <Reveal
+                    key={name + i}
+                    className="story-modal__frame"
+                    root={innerRef}
+                    delay={(i % 4) * 0.08}
+                    style={{ aspectRatio: String(ratioFor(name)) }}
+                    onClick={() => {
+                      const items = story.gallery.map((n) => ({
+                        name: n, title: story.couple, place: story.place, year: story.when,
+                      }));
+                      openLightbox(items, i);
+                    }}
+                  >
+                    <CloudImage
+                      name={name}
+                      alt={`${story.couple}, frame ${i + 1}`}
+                      sizes={GALLERY_SIZES}
+                      q="auto:good"
+                      widths={[480, 768, 1080, 1440]}
+                    />
+                  </Reveal>
+                ))}
+              </Masonry>
+            </ResponsiveMasonry>
           </div>
 
           <div className="story-modal__end">

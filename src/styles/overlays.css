@@ -89,17 +89,10 @@
   font-family: var(--serif); font-style: italic; font-size: 4em; line-height: 0.9;
   color: var(--accent); float: left; padding: 4px 12px 0 0;
 }
-.story-modal__gallery { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(12px, 1.6vw, 22px); padding: 0 var(--gutter); max-width: 1440px; margin: var(--sp-6) auto 0; }
-.story-modal__gallery > div { overflow: hidden; background: var(--bg-paper); cursor: pointer; }
-.story-modal__gallery > div img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(.2,.6,.2,1); }
-.story-modal__gallery > div:hover img { transform: scale(1.04); }
-.story-modal__gallery .g-v1 { grid-column: span 7;  aspect-ratio: 4/3; }
-.story-modal__gallery .g-v2 { grid-column: span 5;  aspect-ratio: 4/5; }
-.story-modal__gallery .g-v3 { grid-column: span 6;  aspect-ratio: 4/5; }
-.story-modal__gallery .g-v4 { grid-column: span 6;  aspect-ratio: 4/5; }
-.story-modal__gallery .g-v5 { grid-column: span 12; aspect-ratio: 21/9; }
-@media (max-width: 768px) {
-  .story-modal__gallery .g-v1, .story-modal__gallery .g-v2, .story-modal__gallery .g-v3,
-  .story-modal__gallery .g-v4, .story-modal__gallery .g-v5 { grid-column: span 12; aspect-ratio: 4/3; }
-}
+/* Columns + gutter handled by react-responsive-masonry; each frame carries its
+   photo's true aspect ratio (set inline), so the images show uncropped. */
+.story-modal__gallery { padding: 0 var(--gutter); max-width: 1440px; margin: var(--sp-6) auto 0; }
+.story-modal__frame { position: relative; overflow: hidden; background: var(--bg-paper); cursor: pointer; }
+.story-modal__frame img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(.2,.6,.2,1); }
+.story-modal__frame:hover img { transform: scale(1.04); }
 .story-modal__end { text-align: center; margin-top: var(--sp-6); }
