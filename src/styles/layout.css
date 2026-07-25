@@ -265,18 +265,9 @@
 .filters button:hover { color: var(--ink); border-color: var(--accent); }
 .filters button.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 
-.masonry {
-  display: flex;
-  align-items: flex-start;
-  gap: clamp(12px, 1.6vw, 22px);
-}
-.masonry__col {
-  flex: 1 1 0;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(12px, 1.6vw, 22px);
-}
+/* Columns + gutter are handled by react-responsive-masonry; this wrapper stays
+   only for the cursor-label mouse tracking. */
+.masonry { width: 100%; }
 .tile {
   position: relative;
   overflow: hidden;
