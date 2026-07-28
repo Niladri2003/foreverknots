@@ -12,7 +12,7 @@ import { cld } from '../utils/cloudinary';
 
 const LOGO_URL = 'https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto/foreverknots/logo.png';
 const HOME_DESC =
-  'Cinematic wedding photography out of Kolkata. Documentary, slow, and printed on paper. Pre-weddings, Bengali weddings and beyond. Tying knots since 2020.';
+  'Forever Knots (foreverknots) — cinematic wedding photography out of Kolkata. Documentary, slow, and printed on paper. Pre-weddings, Bengali weddings and beyond. Tying knots since 2020.';
 
 const ogImage = (name) => cld(name, { w: 1200, fill: true, ar: '1.91:1' });
 
@@ -20,6 +20,7 @@ const business = {
   '@context': 'https://schema.org',
   '@type': 'Photographer',
   name: INFO.brand,
+  alternateName: 'Forever Knots',
   description:
     'Cinematic wedding photography studio out of Kolkata. Pre-weddings, Bengali weddings, candid rituals and heirloom albums. Tying knots since 2020.',
   url: INFO.site,
@@ -48,6 +49,7 @@ const website = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: INFO.brand,
+  alternateName: 'Forever Knots',
   url: INFO.site,
 };
 
