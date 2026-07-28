@@ -48,7 +48,7 @@ export default function Foot({ onJump }) {
           </div>
         </div>
         <div className="foot__bot">
-          <span>© foreverknots · MMXXVI · Kolkata</span>
+          <span>© foreverknots · Kolkata</span>
           <nav className="foot__legal">
             <button type="button" onClick={() => navigate('/privacy')}>Privacy</button>
           </nav>
