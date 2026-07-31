@@ -139,6 +139,9 @@ export default function Contact() {
               <a href={INFO.instagram} target="_blank" rel="noopener noreferrer">
                 Instagram <span>↗</span>
               </a>
+              <a href={INFO.facebook} target="_blank" rel="noopener noreferrer">
+                Facebook <span>↗</span>
+              </a>
               <a
                 href={waLink(INFO.phone, "Hi foreverknots! We're planning our wedding and would love to talk about photography.")}
                 target="_blank"

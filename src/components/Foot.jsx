@@ -33,6 +33,7 @@ export default function Foot({ onJump }) {
             <h5>Elsewhere</h5>
             <ul>
               <li><a href={INFO.instagram} target="_blank" rel="noopener noreferrer">Instagram {INFO.instagramHandle}</a></li>
+              <li><a href={INFO.facebook} target="_blank" rel="noopener noreferrer">Facebook</a></li>
               <li>
                 <a
                   href={waLink(INFO.phone, "Hi foreverknots! We're planning our wedding and would love to talk about photography.")}

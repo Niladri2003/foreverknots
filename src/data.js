@@ -335,6 +335,6 @@ export const INFO = {
   phone: "+91 83358 77977",
   instagram: "https://www.instagram.com/forever_knots__/",
   instagramHandle: "@forever_knots__",
-  facebook: "#",
+  facebook: "https://www.facebook.com/profile.php?id=100092252460962",
   hours: "Mon-Sat · 11:00 - 19:00 IST",
 };

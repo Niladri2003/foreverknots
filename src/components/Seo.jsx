@@ -35,7 +35,7 @@ const business = {
     addressCountry: 'IN',
   },
   areaServed: INFO.serves.map((city) => ({ '@type': 'City', name: city })),
-  sameAs: [INFO.instagram],
+  sameAs: [INFO.instagram, INFO.facebook],
   openingHoursSpecification: {
     '@type': 'OpeningHoursSpecification',
     dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
