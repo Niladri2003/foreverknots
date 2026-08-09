@@ -97,9 +97,13 @@ export default function Nav({ onJump }) {
   useBodyLock(mobile);
 
   const go = (item) => {
-    if (item.type === 'route') navigate(item.to);
-    else onJump(item.id);
+    const fromOverlay = mobile;
     setMobile(false);
+    if (item.type === 'route') navigate(item.to);
+    /* While the overlay is open, useBodyLock has Lenis stopped and scrollTo is
+     * a silent no-op — wait for the unlock effect to release it before jumping. */
+    else if (fromOverlay) setTimeout(() => onJump(item.id), 100);
+    else onJump(item.id);
   };
 
   const isActive = (item) =>
