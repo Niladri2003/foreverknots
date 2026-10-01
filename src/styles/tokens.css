@@ -1,71 +1,88 @@
-/* foreverknots design tokens
- * Default: cinematic dark luxe. A darkened cinema hall for photographs:
- * near-black canvas, candle-gold accents, cream serif type.
- */
+/* foreverknots design tokens: "the jewel box".
+ *
+ * Three grounds the page moves between as you scroll:
+ *   garnet  deep Benarasi oxblood, the house colour
+ *   night   the darkroom, for looking at photographs
+ *   pearl   the paper, for reading
+ * Zari (antique gold) is the only ornament colour; sindoor red is reserved for
+ * the thread. The colour tokens are registered with @property so a change of
+ * <html data-tone> cross-fades every surface and every line of type together. */
+
+@property --bg   { syntax: '<color>'; inherits: true; initial-value: #3B0E0C; }
+@property --fg   { syntax: '<color>'; inherits: true; initial-value: #F1E9DF; }
+@property --mute { syntax: '<color>'; inherits: true; initial-value: #B39C93; }
+@property --line { syntax: '<color>'; inherits: true; initial-value: rgba(241, 233, 223, 0.16); }
+@property --gild { syntax: '<color>'; inherits: true; initial-value: #C9A66B; }
 
 :root {
-  --bg:        #0E0C09;
-  --bg-paper:  #16130E;
-  --bg-deep:   #080706;
-  --ink:       #F0E7D4;
-  --ink-soft:  #C9BCA6;
-  --ink-mute:  #9A8B76;
-  --rule:      #2B2317;
-  --rule-gold: rgba(212, 158, 98, 0.28);
-  --accent:      #D4995D;
-  --accent-warm: #E6C08C;
-  --error:       #E06C4B;
+  /* palette */
+  --garnet:   #3B0E0C;
+  --garnet-2: #4A1411;
+  --night:    #130B0A;
+  --night-2:  #1C1110;
+  --pearl:    #EDE6DE;
+  --pearl-2:  #E4DBD1;
+  --ivory:    #F1E9DF;
+  --ink:      #2B0F0C;
+  --zari:     #C9A66B;
+  --zari-deep:#8C6A34;
+  --sindoor:  #B8261B;
+  --error:    #E0715A;
 
-  --scrim: linear-gradient(180deg, rgba(8,7,6,.2) 0%, rgba(8,7,6,.34) 55%, rgba(8,7,6,.82) 100%);
-  --glow: 0 24px 80px -16px rgba(0,0,0,.75), 0 0 90px -30px rgba(212,153,93,.12);
+  /* the default tone: garnet */
+  --bg:   var(--garnet);
+  --fg:   var(--ivory);
+  --mute: #B39C93;
+  --line: rgba(241, 233, 223, 0.16);
+  --gild: var(--zari);
 
-  --gutter: clamp(20px, 4.5vw, 72px);
-  --sp-5: 64px; --sp-6: 96px; --sp-7: 144px;
+  transition:
+    --bg 1.1s cubic-bezier(0.65, 0, 0.35, 1),
+    --fg 1.1s cubic-bezier(0.65, 0, 0.35, 1),
+    --mute 1.1s cubic-bezier(0.65, 0, 0.35, 1),
+    --line 1.1s cubic-bezier(0.65, 0, 0.35, 1),
+    --gild 1.1s cubic-bezier(0.65, 0, 0.35, 1);
 
+  /* type */
+  --serif: "Noto Serif Display", "Didot", "Bodoni 72", Georgia, serif;
+  --sans:  "Jost", "Futura", "Century Gothic", "Helvetica Neue", Arial, sans-serif;
+
+  /* fluid scale: a 1.333 ratio at the reading end, opening up to poster sizes */
+  --t-xs:  13px;
+  --t-s:   15px;
+  --t-m:   clamp(16px, 1.15vw, 18px);
+  --t-l:   clamp(19px, 1.5vw, 23px);
+  --t-xl:  clamp(26px, 2.5vw, 40px);
+  --t-2xl: clamp(34px, 4vw, 66px);
+  --t-3xl: clamp(46px, 6.4vw, 112px);
+  --t-4xl: clamp(56px, 9vw, 168px);
+
+  /* space */
+  --gutter: clamp(20px, 4vw, 64px);
+  --s-section: clamp(112px, 15vw, 220px);
+
+  /* motion */
+  --expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --silk: cubic-bezier(0.76, 0, 0.24, 1);
+
+  /* layers */
   --z-nav: 50; --z-wa: 55; --z-mnav: 60; --z-story: 90;
-  --z-lightbox: 110; --z-preloader: 150; --z-grain: 200;
-
-  --serif: "Cormorant Garamond", "EB Garamond", Georgia, serif;
-  --sans:  "DM Sans", "Helvetica Neue", Arial, sans-serif;
-  --monof: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --z-lightbox: 110; --z-curtain: 140; --z-preloader: 150;
+  --z-grain: 200; --z-cursor: 210;
 }
 
-/* Former light default, preserved as an optional palette (unwired). */
-:root[data-palette="paper"] {
-  --bg:       #F4EDE0;
-  --bg-paper: #FAF5EA;
-  --bg-deep:  #E8DDC8;
-  --ink:      #1A1612;
-  --ink-soft: #4A4239;
-  --ink-mute: #8A7E6E;
-  --rule:     #D9CBB2;
-  --rule-gold: rgba(140, 59, 34, 0.25);
-  --accent:      #8C3B22;
-  --accent-warm: #C7855C;
+:root[data-tone="night"] {
+  --bg:   var(--night);
+  --fg:   #EFE7DC;
+  --mute: #A08F86;
+  --line: rgba(239, 231, 220, 0.14);
+  --gild: var(--zari);
 }
 
-:root[data-palette="ivory"] {
-  --bg:       #EDE6D8;
-  --bg-paper: #F5EFE2;
-  --bg-deep:  #DDD3BD;
-  --ink:      #1A1612;
-  --ink-soft: #4A4239;
-  --ink-mute: #8A7E6E;
-  --rule:     #C8B999;
-  --rule-gold: rgba(107, 68, 35, 0.25);
-  --accent:      #6B4423;
-  --accent-warm: #B8845F;
-}
-
-:root[data-palette="rose"] {
-  --bg:       #F4E8E0;
-  --bg-paper: #FAEFE7;
-  --bg-deep:  #E8D5C5;
-  --ink:      #2A1812;
-  --ink-soft: #5A3E33;
-  --ink-mute: #9E7E70;
-  --rule:     #D9B9A1;
-  --rule-gold: rgba(161, 68, 48, 0.25);
-  --accent:      #A14430;
-  --accent-warm: #CA8266;
+:root[data-tone="pearl"] {
+  --bg:   var(--pearl);
+  --fg:   var(--ink);
+  --mute: #6E5650;
+  --line: rgba(43, 15, 12, 0.16);
+  --gild: var(--zari-deep);
 }

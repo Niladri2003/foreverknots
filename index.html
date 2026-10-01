@@ -1,29 +1,32 @@
 <!doctype html>
-<html lang="en" style="background:#0E0C09">
+<html lang="en" style="background:#3B0E0C">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Foreverknots · Wedding Photography</title>
-    <meta name="description" content="Forever Knots (foreverknots) — cinematic wedding photography out of Kolkata. Documentary, slow, and printed on paper. Pre-weddings, Bengali weddings and beyond. Tying knots since 2020." />
-    <meta name="theme-color" content="#0E0C09" />
+    <meta name="description" content="Forever Knots (foreverknots) — cinematic wedding photography for Indian weddings, based in Kolkata and travelling across India. Documentary, unhurried, printed on paper. Tying knots since 2020." />
+    <meta name="theme-color" content="#3B0E0C" />
     <link rel="canonical" href="https://foreverknots.studio/" />
 
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://foreverknots.studio/" />
     <meta property="og:site_name" content="foreverknots" />
-    <meta property="og:title" content="foreverknots · Wedding Photography, Kolkata" />
-    <meta property="og:description" content="Cinematic wedding photography out of Kolkata. Documentary, slow, and printed on paper. Tying knots since 2020." />
+    <meta property="og:title" content="foreverknots · Wedding Photography across India" />
+    <meta property="og:description" content="Cinematic wedding photography for Indian weddings, based in Kolkata and travelling across India. Tying knots since 2020." />
     <meta property="og:image" content="https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto,c_fill,g_auto,ar_1.91:1,w_1200/foreverknots/hero-veil.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Two pools: the hero frames are CORS fetches (WebGL textures), everything else is not. -->
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
     <link rel="preconnect" href="https://res.cloudinary.com" />
     <!-- Responsive hero preload: imagesrcset/imagesizes match the <img> below exactly,
          so the browser fetches ONE width and reuses it for the boot image and the React hero. -->
     <link
       rel="preload"
       as="image"
+      crossorigin="anonymous"
       fetchpriority="high"
       href="https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto:best,w_2048/foreverknots/hero-veil.jpg"
       imagesizes="100vw"
@@ -34,7 +37,7 @@
         https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto:best,w_1920/foreverknots/hero-veil.jpg 1920w,
         https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto:best,w_2048/foreverknots/hero-veil.jpg 2048w"
     />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,300..500;1,300..500&family=Jost:wght@300..600&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/png" sizes="32x32" href="https://res.cloudinary.com/dvbnkndyc/image/upload/c_fill,w_32,h_32/foreverknots/logo.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="https://res.cloudinary.com/dvbnkndyc/image/upload/c_fill,w_192,h_192/foreverknots/logo.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="https://res.cloudinary.com/dvbnkndyc/image/upload/c_fill,w_180,h_180/foreverknots/logo.png" />
@@ -58,7 +61,7 @@
         height: calc(110vh - 4px);
         object-fit: cover;
         z-index: 0;
-        background: #080706;
+        background: #130B0A;
         pointer-events: none;
       }
       /* First-visit cover: sits over the boot image (same z-level, later in DOM) so
@@ -72,7 +75,7 @@
         position: fixed;
         inset: 0;
         z-index: 0;
-        background: #0E0C09;
+        background: #3B0E0C;
         pointer-events: none;
       }
       /* App paints above the boot image, hiding it the moment the hero renders. */
@@ -88,6 +91,7 @@
       id="boot-hero"
       class="boot-hero"
       alt="Bride beneath a red veil, glowing in candlelight"
+      crossorigin="anonymous"
       fetchpriority="high"
       decoding="sync"
       sizes="100vw"
@@ -113,6 +117,15 @@
       (function () {
         var img = document.getElementById('boot-hero');
         var cover = document.getElementById('boot-cover');
+        /* Only the homepage has a hero to hand off to. Anywhere else (gallery,
+           privacy, a story deep link) nothing would ever retire the boot image,
+           and it would sit over the page until the timeout below. */
+        var path = location.pathname.replace(/\/+$/, '');
+        if (path !== '' && path !== '/index.html') {
+          if (img) img.remove();
+          if (cover) cover.remove();
+          return;
+        }
         var seen = true;
         try { seen = !!sessionStorage.getItem('fk-seen'); } catch (e) {}
         var reduced = false;

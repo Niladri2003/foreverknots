@@ -1,9 +1,8 @@
-/* foreverknots: cinematic dark luxe.
- * A darkened cinema hall for photographs: near-black canvas, candle-gold
- * accents, cream serif type, film grain. Split by concern below.
- */
+/* foreverknots: "the jewel box".
+ * Benarasi garnet, darkroom night and pearl paper; antique zari for ornament;
+ * Noto Serif Display for the voice, Jost for the hand. Split by concern below. */
 @import "./styles/tokens.css";
 @import "./styles/base.css";
-@import "./styles/layout.css";
-@import "./styles/features.css";
-@import "./styles/overlays.css";
+@import "./styles/chrome.css";
+@import "./styles/home.css";
+@import "./styles/pages.css";

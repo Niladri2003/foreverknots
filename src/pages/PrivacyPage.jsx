@@ -7,16 +7,15 @@ import Reveal from '../components/Reveal';
 const EFFECTIVE_DATE = '25 July 2026';
 
 export default function PrivacyPage() {
-  const mail = <a href={`mailto:${INFO.email}`}>{INFO.email}</a>;
+  const mail = <a className="tlink tlink--on" href={`mailto:${INFO.email}`}>{INFO.email}</a>;
 
   return (
-    <main className="legal-page">
+    <main className="legal-page" data-tone="pearl">
       <section className="section">
         <div className="wrap">
           <Reveal className="legal">
-            <div className="mono">Legal</div>
-            <h1 className="legal__title">Privacy Policy</h1>
-            <p className="legal__updated">Last updated · {EFFECTIVE_DATE}</p>
+            <h1 className="legal__title display">Privacy policy</h1>
+            <p className="legal__updated caption">Last updated {EFFECTIVE_DATE}</p>
 
             <p>
               This policy explains what information {INFO.brand} (“we”, “us”)

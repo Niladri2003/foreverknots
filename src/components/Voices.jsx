@@ -1,89 +1,128 @@
 import { useState, useEffect, useRef } from 'react';
 import { m, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { TESTIMONIALS, STORIES } from '../data';
-import { EASE } from '../utils/motion';
+import { EXPO, EASE } from '../utils/motion';
 
-const INTERVAL = 7000;
+const INTERVAL = 8000;
 
-// Match each testimonial to the journal cover of the couple who wrote it, so the
-// backdrop is that couple's own photograph. The attribution reads
-// "Couple · Type, Place"; the name before the "·" is the STORIES couple key.
+// Each quote sits over the cover of the couple who wrote it. The attribution
+// reads "Couple · Type, Place"; the name before the "·" is the STORIES key.
 const COVER_BY_COUPLE = Object.fromEntries(STORIES.map((s) => [s.couple, s.cover]));
-const coverFor = (attr) => COVER_BY_COUPLE[attr.split('·')[0].trim()] || null;
+const split = (attr) => {
+  const [who, rest = ''] = attr.split('·').map((x) => x.trim());
+  return { who, rest };
+};
 
+/* One quote at a time, set like a pull-quote in a magazine. The words arrive
+ * out of a soft blur, one after another; the couple's names below double as
+ * the controls, each with a hairline that fills while its quote is shown. */
 export default function Voices() {
   const [i, setI] = useState(0);
-  const [hovered, setHovered] = useState(false);
+  const [held, setHeld] = useState(false);
   const ref = useRef(null);
-  const inView = useInView(ref, { amount: 0.3 });
+  const inView = useInView(ref, { amount: 0.35 });
   const reduced = useReducedMotion();
-  const playing = inView && !hovered && !reduced;
+  const playing = inView && !held && !reduced;
 
   useEffect(() => {
-    if (!playing) return;
-    const t = setInterval(() => setI((x) => (x + 1) % TESTIMONIALS.length), INTERVAL);
-    return () => clearInterval(t);
+    if (!playing) return undefined;
+    const t = setTimeout(() => setI((x) => (x + 1) % TESTIMONIALS.length), INTERVAL);
+    return () => clearTimeout(t);
   }, [playing, i]);
 
   const t = TESTIMONIALS[i];
-  const photo = coverFor(t.a);
+  const photo = COVER_BY_COUPLE[split(t.a).who] || null;
+  const words = t.q.split(' ');
 
   return (
     <section
       id="voices"
-      className="testi"
+      className="voices"
       ref={ref}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      data-tone="night"
+      aria-label="Kind words from couples"
+      onMouseEnter={() => setHeld(true)}
+      onMouseLeave={() => setHeld(false)}
+      onFocusCapture={() => setHeld(true)}
+      onBlurCapture={() => setHeld(false)}
     >
-      <div className="testi__bg" aria-hidden="true">
-        <AnimatePresence>
+      <div className="voices__bg" aria-hidden="true">
+        <AnimatePresence initial={false}>
           {photo && (
             <m.img
-              key={i}
+              key={photo}
               src={photo}
               alt=""
-              className="testi__bg-img"
               loading="lazy"
               decoding="async"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0, scale: 1.08 }}
+              animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: reduced ? 0 : 1.1, ease: EASE }}
+              transition={{ opacity: { duration: 1.6, ease: EASE }, scale: { duration: 9, ease: 'linear' } }}
             />
           )}
         </AnimatePresence>
       </div>
-      <div className="testi__scrim" aria-hidden="true" />
-      <div className="testi__inner">
-        <div className="mono">Kind words · received with thanks</div>
-        <span className="testi__mark" aria-hidden="true">"</span>
-        <AnimatePresence mode="wait">
-          <m.div
-            key={i}
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.55, ease: EASE }}
-          >
-            <blockquote className="testi__quote">{t.q}</blockquote>
-            <div className="testi__attr">{t.a}</div>
-          </m.div>
-        </AnimatePresence>
-        <div className="testi__nav">
-          {TESTIMONIALS.map((_, k) => (
-            <button key={k} onClick={() => setI(k)} aria-label={`Testimonial ${k + 1}`}>
-              {k === i && (
+
+      <div className="voices__inner wrap">
+        <span className="voices__mark display" aria-hidden="true">&ldquo;</span>
+        <div className="voices__stage" aria-live="polite">
+          <AnimatePresence mode="wait" initial={false}>
+            <m.blockquote
+              key={i}
+              className="voices__quote display"
+              initial="hidden"
+              animate="show"
+              exit="gone"
+              variants={{
+                hidden: {},
+                show: { transition: { staggerChildren: reduced ? 0 : 0.035 } },
+                gone: { opacity: 0, y: -12, filter: 'blur(4px)', transition: { duration: 0.5, ease: EASE } },
+              }}
+            >
+              {words.map((w, k) => (
                 <m.span
-                  className="fill"
-                  key={`fill-${i}-${playing}`}
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: playing ? 1 : 0.35 }}
-                  transition={playing ? { duration: INTERVAL / 1000, ease: 'linear' } : { duration: 0.3 }}
-                />
-              )}
-            </button>
-          ))}
+                  key={k}
+                  className="voices__w"
+                  variants={{
+                    hidden: { opacity: 0, y: 10, filter: 'blur(8px)' },
+                    show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 1.1, ease: EXPO } },
+                  }}
+                >
+                  {w}{' '}
+                </m.span>
+              ))}
+            </m.blockquote>
+          </AnimatePresence>
+        </div>
+
+        <div className="voices__who" role="tablist" aria-label="Choose a couple">
+          {TESTIMONIALS.map((x, k) => {
+            const { who, rest } = split(x.a);
+            return (
+              <button
+                key={x.a}
+                role="tab"
+                aria-selected={k === i}
+                className={`voices__tab ${k === i ? 'is-on' : ''}`}
+                onClick={() => setI(k)}
+              >
+                <span className="voices__tab-name">{who}</span>
+                <span className="voices__tab-rest label">{rest}</span>
+                <span className="voices__tab-line" aria-hidden="true">
+                  {k === i && (
+                    <m.span
+                      key={`${i}-${playing}`}
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      // fills over the quote's time while playing; held, it just completes
+                      transition={playing ? { duration: INTERVAL / 1000, ease: 'linear' } : { duration: 0.6, ease: EXPO }}
+                    />
+                  )}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </section>
