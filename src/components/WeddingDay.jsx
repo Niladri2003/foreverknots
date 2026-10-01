@@ -51,12 +51,74 @@ function Chapter({ beat, i }) {
   );
 }
 
+/* Phones: each chapter is a full-screen photograph that pins while the next
+ * one slides up over it. As it is covered it recedes (scales back, dims), and
+ * as a card arrives its photograph settles from a slight zoom. The text sits
+ * on a wash of that chapter's sky colour. */
+function DayCard({ beat, i, onRef }) {
+  const ref = useRef(null);
+  const { scrollYProgress: leave } = useScroll({ target: ref, offset: ['start start', 'end start'] });
+  const { scrollYProgress: arrive } = useScroll({ target: ref, offset: ['start end', 'start start'] });
+  const last = i === N - 1;
+  const scale = useRange(leave, [0, 1], [1, last ? 1 : 0.88]);
+  const dim = useRange(leave, [0, 1], [0, last ? 0 : 0.7]);
+  const zoom = useRange(arrive, [0, 1], [1.18, 1]);
+  const cloud = !beat.photo.startsWith('/');
+
+  return (
+    <article
+      className="dayc"
+      ref={(el) => { ref.current = el; onRef(el); }}
+      data-i={i}
+      style={{ zIndex: i + 1, '--sky': beat.sky }}
+    >
+      <m.div className="dayc__in" style={{ scale }}>
+        <m.div className="dayc__photo" style={{ scale: zoom }}>
+          <Develop
+            name={beat.photo}
+            alt={beat.alt}
+            className="dayc__img"
+            sizes="100vw"
+            widths={[540, 768, 1080]}
+            q="auto:good"
+            fill={cloud}
+            ar="9:16"
+            amount={0.05}
+            imgStyle={beat.focus ? { objectPosition: beat.focus } : undefined}
+          />
+        </m.div>
+        <div className="dayc__wash" aria-hidden="true" />
+        <div className="dayc__text">
+          <div className="day__when">
+            <span className="day__idx">{String(i + 1).padStart(2, '0')}</span>
+            <span>{beat.when}</span>
+          </div>
+          <SplitWords as="h3" className="dayc__name display" amount={0.6} stagger={0.07}>
+            {beat.name}
+          </SplitWords>
+          <m.p
+            className="dayc__p"
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.8 }}
+            transition={{ duration: 1.2, ease: EXPO, delay: 0.25 }}
+          >
+            {beat.text}
+          </m.p>
+        </div>
+        <m.div className="dayc__dim" style={{ opacity: dim }} aria-hidden="true" />
+      </m.div>
+    </article>
+  );
+}
+
 export default function WeddingDay() {
   const ref = useRef(null);
   const narrow = useMedia(NARROW);
   const reduced = useReducedMotion();
   const [active, setActive] = useState(0);
   const figs = useRef([]);
+  const cards = narrow && !reduced;
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   // The sky starts in the night of the section before and warms into the
@@ -65,19 +127,25 @@ export default function WeddingDay() {
   const sky = useRange(scrollYProgress, stops, ['#130B0A', ...DAY.map((d) => d.sky)]);
   const glowY = useRange(scrollYProgress, [0, 1], ['10%', '90%']);
 
-  // whichever photograph holds the middle of the screen sets the chapter
+  // The chapter is the latest photograph holding the middle of the screen.
+  // (On phones the pinned cards stack, so several overlap the middle at once;
+  // the topmost, i.e. the highest index, is the one being read.)
   useEffect(() => {
+    const inMiddle = new Set();
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
-          if (e.isIntersecting) setActive(Number(e.target.dataset.i));
+          const i = Number(e.target.dataset.i);
+          if (e.isIntersecting) inMiddle.add(i);
+          else inMiddle.delete(i);
         });
+        if (inMiddle.size) setActive(Math.max(...inMiddle));
       },
       { rootMargin: '-45% 0px -45% 0px' },
     );
     figs.current.forEach((el) => el && io.observe(el));
     return () => io.disconnect();
-  }, [narrow]);
+  }, [narrow, cards]);
 
   const beat = DAY[active];
 
@@ -97,6 +165,20 @@ export default function WeddingDay() {
         </p>
       </header>
 
+      {cards ? (
+        <div className="dayc-wrap">
+          {/* rides above the stack: the sky arc and where you are in the day */}
+          <div className="dayc__hud" aria-hidden="true">
+            <SkyArc progress={scrollYProgress} />
+            <span className="dayc__count">
+              {String(active + 1).padStart(2, '0')} <i>/</i> {String(N).padStart(2, '0')}
+            </span>
+          </div>
+          {DAY.map((d, i) => (
+            <DayCard key={d.id} beat={d} i={i} onRef={(el) => { figs.current[i] = el; }} />
+          ))}
+        </div>
+      ) : (
       <div className="day__grid wrap">
         <div className="day__panel">
           <SkyArc progress={scrollYProgress} />
@@ -146,6 +228,7 @@ export default function WeddingDay() {
           ))}
         </div>
       </div>
+      )}
     </section>
   );
 }

@@ -1,15 +1,31 @@
 import { useState, useRef, useEffect } from 'react';
-import { m, AnimatePresence, useInView, useMotionValue, useSpring, useTransform, useVelocity } from 'motion/react';
+import { m, AnimatePresence, useInView, useMotionValue, useScroll, useSpring, useTransform, useVelocity } from 'motion/react';
 import { STORIES } from '../data';
 import CloudImage from './CloudImage';
+import Develop from './Develop';
 import SplitWords from './SplitWords';
 import { useMedia, FINE_POINTER } from '../hooks/useMedia';
-import { EXPO, EASE } from '../utils/motion';
+import { EXPO, EASE, useRange } from '../utils/motion';
 
 /* The journal as a list of names, set large. On a pointer device the couple's
  * cover floats beside the cursor while you read down the list; it leans into
  * the direction you move, the way a held print would. On touch the covers sit
  * in the rows themselves. */
+/* Touch screens: the cover sits in the row, develops as it arrives, and
+ * drifts against the scroll inside its frame. */
+function Thumb({ src }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const y = useRange(scrollYProgress, [0, 1], ['-7%', '7%']);
+  return (
+    <span className="journal__thumb" ref={ref} aria-hidden="true">
+      <m.span className="journal__thumb-in" style={{ y }}>
+        <Develop name={src} sizes="90vw" widths={[540, 768, 1080]} fill ar="16:10" amount={0.3} />
+      </m.span>
+    </span>
+  );
+}
+
 export default function Journal({ openStory }) {
   const fine = useMedia(FINE_POINTER);
   const [hover, setHover] = useState(null);
@@ -72,11 +88,7 @@ export default function Journal({ openStory }) {
                   onFocus={() => setHover(i)}
                   data-cursor="Read"
                 >
-                  {!fine && (
-                    <span className="journal__thumb" aria-hidden="true">
-                      <CloudImage name={s.cover} alt="" sizes="90vw" fill ar="16:10" />
-                    </span>
-                  )}
+                  {!fine && <Thumb src={s.cover} />}
                   <span className="journal__names display">
                     {a} <span className="journal__amp">&amp;</span> {b}
                   </span>

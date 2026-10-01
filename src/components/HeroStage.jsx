@@ -142,10 +142,14 @@ export default function HeroStage({ slides, index, active }) {
       .catch(() => {});
   }, [index, mode, canvasOn, slides, ensure]);
 
-  /* Candle light under the cursor (fine pointers only). */
+  /* Candle light: under the cursor on pointer devices; on touch screens it
+   * wanders across the photograph by itself. */
   useEffect(() => {
     if (mode !== 'gl') return undefined;
-    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return undefined;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      rRef.current?.setAuto(true);
+      return () => rRef.current?.setAuto(false);
+    }
     const onMove = (e) => {
       const c = canvasRef.current;
       const r = rRef.current;

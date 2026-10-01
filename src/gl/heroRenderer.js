@@ -8,7 +8,9 @@
  *    frame, the incoming photograph flows in behind it with a little warp, and
  *    the front itself carries a faint candle-warm glow.
  *  - Every frame drifts in very slowly (a Ken Burns push) for its whole life.
- *  - A pool of warm light follows the cursor across the photograph.
+ *  - A pool of warm light follows the cursor across the photograph; on touch
+ *    screens (no cursor) it wanders slowly on its own, with a faint flicker,
+ *    like a diya carried through the frame.
  *
  * At rest the shader takes a uniform branch that skips all the noise, so the
  * steady state costs two texture reads per pixel. */
@@ -171,6 +173,7 @@ export function createHeroRenderer(canvas, { life = 9000, transition = 2400, pus
     light: 0, lightT: 0,
     w: 1, h: 1,
     raf: 0, running: false, dirty: true,
+    auto: false,
     onTransitionEnd: null,
   };
 
@@ -239,6 +242,12 @@ export function createHeroRenderer(canvas, { life = 9000, transition = 2400, pus
     gl.uniform1f(U.uZoomB, zoomFor(state.bBorn, now));
     gl.uniform1f(U.uProg, B ? ease(prog) : 0);
 
+    if (state.auto) {
+      const t = now / 1000;
+      state.mouseT[0] = 0.5 + 0.2 * Math.sin(t * 0.19) + 0.06 * Math.sin(t * 0.47 + 0.8);
+      state.mouseT[1] = 0.4 + 0.12 * Math.sin(t * 0.13 + 1.1);
+      state.lightT = 0.72 + 0.1 * Math.sin(t * 2.3) * Math.sin(t * 1.7 + 0.4);
+    }
     state.mouse[0] += (state.mouseT[0] - state.mouse[0]) * 0.08;
     state.mouse[1] += (state.mouseT[1] - state.mouse[1]) * 0.08;
     state.light += (state.lightT - state.light) * 0.05;
@@ -286,6 +295,11 @@ export function createHeroRenderer(canvas, { life = 9000, transition = 2400, pus
         state.mouse[0] = x;
         state.mouse[1] = y;
       }
+    },
+    /* no cursor: let the light wander by itself */
+    setAuto(on) {
+      state.auto = on;
+      if (!on) state.lightT = 0;
     },
     resize,
     start() {

@@ -7,7 +7,10 @@ import SplitWords from './SplitWords';
 import { useMedia, NARROW } from '../hooks/useMedia';
 import { useGo } from './Transition';
 
+// px the wall travels across per px scrolled down (phones: frames are
+// narrower, so a gentler rate keeps each one on screen long enough to see)
 const SPEED = 1.7;
+const SPEED_NARROW = 1.25;
 const FRAMES = SELECTS.map((id) => PHOTOS.find((p) => p.id === id)).filter(Boolean);
 
 /* Hung like a salon wall: heights and vertical positions vary frame to frame,
@@ -81,7 +84,9 @@ export default function Selects({ openLightbox }) {
   const lenis = useLenis();
   const reduced = useReducedMotion();
   const narrow = useMedia(NARROW);
-  const pinned = !narrow && !reduced;
+  // Pinned on every screen size; phones get the same scroll-driven travel,
+  // with frames sized to the screen. Only reduced motion unpins it.
+  const pinned = !reduced;
   // Reduced motion on a wide screen: no pinning and no sideways-only rail for
   // a mouse to fight with, just the nine prints hung in rows.
   const wall = !narrow && reduced;
@@ -149,7 +154,7 @@ export default function Selects({ openLightbox }) {
       className={`sel ${pinned ? 'sel--pinned' : ''} ${wall ? 'sel--wall' : ''}`}
       ref={ref}
       data-tone="night"
-      style={pinned ? { height: `calc(100vh + ${Math.round(dist / SPEED)}px)` } : undefined}
+      style={pinned ? { height: `calc(${narrow ? '100svh' : '100vh'} + ${Math.round(dist / (narrow ? SPEED_NARROW : SPEED))}px)` } : undefined}
       aria-label="Selected work"
     >
       <div className="sel__sticky">
