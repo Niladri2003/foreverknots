@@ -1,59 +1,72 @@
-import { useNavigate } from 'react-router-dom';
+import { m } from 'motion/react';
 import { INFO } from '../data';
 import { waLink } from '../utils/whatsapp';
+import RingsMark from './RingsMark';
+import { EXPO } from '../utils/motion';
 
-export default function Foot({ onJump }) {
-  const navigate = useNavigate();
+const WORD = 'foreverknots';
+const WA = "Hi foreverknots! We're planning our wedding and would love to talk about photography.";
+
+export default function Foot({ onJump, onRoute, onTop }) {
+  const year = new Date().getFullYear();
   return (
-    <footer className="foot">
+    <footer className="foot" data-tone="night">
       <div className="wrap">
         <div className="foot__top">
-          <div>
-            <div className="foot__brand">
-              forever<em>knots</em>
-            </div>
-            <p className="foot__tagline">
-              A wedding-photography studio out of Kolkata. Documentary, slow,
-              and printed on paper. Tying knots since 2020.
+          <div className="foot__intro">
+            <RingsMark size={52} />
+            <p className="foot__line display">
+              Wedding photography for the knot you tie once. Based in Kolkata,
+              travelling across India since 2020.
             </p>
           </div>
-          <div className="foot__col">
-            <h5>Studio</h5>
+          <nav className="foot__col" aria-label="Site">
+            <p className="label">Visit</p>
             <ul>
-              <li onClick={() => onJump('work')}>Work</li>
-              <li onClick={() => onJump('stories')}>Stories</li>
-              <li onClick={() => navigate('/gallery')}>Gallery</li>
-              <li onClick={() => onJump('packages')}>Investment</li>
-              <li onClick={() => onJump('about')}>About</li>
-              <li onClick={() => onJump('faq')}>FAQ</li>
-              <li onClick={() => onJump('contact')}>Inquire</li>
+              <li><button className="tlink" onClick={() => onJump('work')}>Selected work</button></li>
+              <li><button className="tlink" onClick={() => onJump('day')}>The wedding day</button></li>
+              <li><button className="tlink" onClick={() => onJump('stories')}>Journal</button></li>
+              <li><button className="tlink" onClick={() => onRoute('/gallery')}>Gallery</button></li>
+              <li><button className="tlink" onClick={() => onJump('about')}>The studio</button></li>
+              <li><button className="tlink" onClick={() => onJump('faq')}>Questions</button></li>
             </ul>
-          </div>
+          </nav>
           <div className="foot__col">
-            <h5>Elsewhere</h5>
+            <p className="label">Talk to us</p>
             <ul>
-              <li><a href={INFO.instagram} target="_blank" rel="noopener noreferrer">Instagram {INFO.instagramHandle}</a></li>
-              <li><a href={INFO.facebook} target="_blank" rel="noopener noreferrer">Facebook</a></li>
-              <li>
-                <a
-                  href={waLink(INFO.phone, "Hi foreverknots! We're planning our wedding and would love to talk about photography.")}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  WhatsApp us
-                </a>
-              </li>
-              <li><a href={`mailto:${INFO.email}`}>{INFO.email}</a></li>
-              <li>{INFO.phone}</li>
+              <li><a className="tlink" href={`mailto:${INFO.email}`}>{INFO.email}</a></li>
+              <li><a className="tlink" href={`tel:+${INFO.phone.replace(/\D/g, '')}`}>{INFO.phone}</a></li>
+              <li><a className="tlink" href={waLink(INFO.phone, WA)} target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+              <li><a className="tlink" href={INFO.instagram} target="_blank" rel="noopener noreferrer">Instagram</a></li>
+              <li><a className="tlink" href={INFO.facebook} target="_blank" rel="noopener noreferrer">Facebook</a></li>
             </ul>
           </div>
         </div>
+
+        <m.div
+          className="foot__word display"
+          aria-hidden="true"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.5 }}
+          variants={{ show: { transition: { staggerChildren: 0.045 } } }}
+        >
+          {WORD.split('').map((ch, i) => (
+            <span className="rw" key={i}>
+              <m.span
+                className="rw__i"
+                variants={{ hidden: { y: '105%' }, show: { y: '0%', transition: { duration: 1.6, ease: EXPO } } }}
+              >
+                {ch}
+              </m.span>
+            </span>
+          ))}
+        </m.div>
+
         <div className="foot__bot">
-          <span>© foreverknots · Kolkata</span>
-          <nav className="foot__legal">
-            <button type="button" onClick={() => navigate('/privacy')}>Privacy</button>
-          </nav>
-          <span>Made with care</span>
+          <span className="label">&copy; {year} foreverknots</span>
+          <button className="label tlink" onClick={() => onRoute('/privacy')}>Privacy</button>
+          <button className="label tlink" onClick={onTop}>Back to the top</button>
         </div>
       </div>
     </footer>

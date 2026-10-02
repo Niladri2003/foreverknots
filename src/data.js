@@ -1,30 +1,33 @@
 /* All images live on Cloudinary in the `foreverknots` folder.
  * Store bare names here; URLs are built by utils/cloudinary.js. */
 
+// Titles re-matched to the frames Cloudinary actually serves (Oct 2026): nine
+// captions had drifted onto the wrong photograph. Places are only as specific
+// as the frame itself shows.
 export const PHOTOS = [
-  { id: "p05", cat: "candid",   title: "The Haldi, Danced",     place: "Kolkata · West Bengal",      year: "2024", ratio: 1.463, aspect: "landscape" },
-  { id: "p18", cat: "wedding",  title: "The Bengali Bride",      place: "South Kolkata",              year: "2024", ratio: 1.500, aspect: "landscape" },
-  { id: "p15", cat: "prewed",   title: "The Old Stairwell",      place: "North Kolkata Heritage",     year: "2024", ratio: 1.500, aspect: "landscape" },
-  { id: "p14", cat: "candid",   title: "Haldi, Held High",       place: "Kolkata",       year: "2024", ratio: 1.437, aspect: "landscape" },
+  { id: "p05", cat: "candid",   title: "The Haldi, Danced",     place: "Kolkata, West Bengal",       year: "2024", ratio: 1.463, aspect: "landscape" },
+  { id: "p18", cat: "prewed",   title: "Quiet Spectator",        place: "Hooghly riverside",          year: "2024", ratio: 1.500, aspect: "landscape" },
+  { id: "p15", cat: "detail",   title: "The Ring, Up Close",     place: "Kolkata",                    year: "2024", ratio: 1.500, aspect: "landscape" },
+  { id: "p14", cat: "candid",   title: "Haldi, Held High",       place: "Kolkata",                    year: "2024", ratio: 1.437, aspect: "landscape" },
   { id: "p01", cat: "prewed",   title: "The Inner Courtyard",    place: "North Kolkata",              year: "2024", ratio: 1.500, aspect: "landscape" },
-  { id: "p13", cat: "portrait", title: "Sunflower Promise",      place: "Hooghly Riverside",          year: "2025", ratio: 1.387, aspect: "landscape" },
+  { id: "p13", cat: "wedding",  title: "The Bride, by Lamplight", place: "South Kolkata",              year: "2025", ratio: 1.387, aspect: "landscape" },
   { id: "p03", cat: "prewed",   title: "Beside the Lake",        place: "Rabindra Sarobar",           year: "2024", ratio: 0.667, aspect: "portrait" },
-  { id: "p10", cat: "portrait", title: "A Red Saree, Spun",      place: "Princep Ghat",               year: "2024", ratio: 0.667, aspect: "portrait" },
+  { id: "p10", cat: "portrait", title: "Forehead to Forehead",   place: "Kolkata",                    year: "2024", ratio: 0.667, aspect: "portrait" },
   { id: "p20", cat: "prewed",   title: "Green Shutters",         place: "Bowbazar Lane",              year: "2024", ratio: 0.667, aspect: "portrait" },
-  { id: "p21", cat: "portrait", title: "Across the Wall",        place: "Varanasi · Uttar Pradesh",   year: "2025", ratio: 0.562, aspect: "portrait" },
+  { id: "p21", cat: "portrait", title: "Noir Editorial",         place: "Studio story",               year: "2025", ratio: 0.562, aspect: "portrait" },
   { id: "p09", cat: "prewed",   title: "Arms to the Sky",        place: "Ranchi Hills",               year: "2024", ratio: 1.500, aspect: "landscape" },
   { id: "p17", cat: "prewed",   title: "Among the Books",        place: "College Street",             year: "2024", ratio: 1.500, aspect: "landscape" },
   { id: "p12", cat: "portrait", title: "On the Ghat",            place: "Hooghly",                    year: "2025", ratio: 1.500, aspect: "landscape" },
   { id: "p22", cat: "candid",   title: "The Groom's Turmeric",   place: "Bhubaneswar",                year: "2024", ratio: 0.576, aspect: "portrait" },
-  { id: "p23", cat: "detail",   title: "Rings, Reading",         place: "Studio Detail",              year: "2024", ratio: 1.500, aspect: "landscape" },
+  { id: "p23", cat: "prewed",   title: "The Old Stairwell",      place: "North Kolkata heritage",     year: "2024", ratio: 1.500, aspect: "landscape" },
   { id: "p25", cat: "portrait", title: "Held, Laughing",         place: "Kolkata",                    year: "2024", ratio: 0.667, aspect: "portrait" },
   { id: "p04", cat: "prewed",   title: "Painted Walls",          place: "Kumartuli, Kolkata",         year: "2024", ratio: 0.672, aspect: "portrait" },
-  { id: "p07", cat: "portrait", title: "Polka & Petals",         place: "Garden Studio",              year: "2024", ratio: 0.667, aspect: "portrait" },
-  { id: "p02", cat: "portrait", title: "Lamp Light",             place: "After Hours",                year: "2024", ratio: 0.667, aspect: "portrait" },
-  { id: "p24", cat: "portrait", title: "Eye to Eye",             place: "Kolkata",                    year: "2024", ratio: 1.500, aspect: "landscape" },
-  { id: "p06", cat: "candid",   title: "Of Course It Mattered",  place: "Behala",                     year: "2024", ratio: 0.896, aspect: "portrait" },
-  { id: "p08", cat: "prewed",   title: "Quiet Spectator",        place: "Kashmir",                    year: "2025", ratio: 1.500, aspect: "landscape" },
-  { id: "p19", cat: "wedding",  title: "Noir Editorial",         place: "Studio Story",               year: "2024", ratio: 0.614, aspect: "portrait" },
+  { id: "p07", cat: "portrait", title: "Polka & Petals",         place: "Garden studio",              year: "2024", ratio: 0.667, aspect: "portrait" },
+  { id: "p02", cat: "portrait", title: "Lamp Light",             place: "After hours",                year: "2024", ratio: 0.667, aspect: "portrait" },
+  { id: "p24", cat: "portrait", title: "Into the River",         place: "Kolkata",                    year: "2024", ratio: 1.500, aspect: "landscape" },
+  { id: "p06", cat: "portrait", title: "A Red Saree, Spun",      place: "The Hooghly, by the Howrah", year: "2024", ratio: 0.896, aspect: "portrait" },
+  { id: "p08", cat: "portrait", title: "Sunflower Promise",      place: "Hooghly riverside",          year: "2025", ratio: 1.500, aspect: "landscape" },
+  { id: "p19", cat: "prewed",   title: "Dappled, in White",      place: "Kolkata",                    year: "2024", ratio: 0.614, aspect: "portrait" },
 ];
 
 export const FILTERS = [
@@ -235,11 +238,83 @@ export const TESTIMONIALS = [
   },
   {
     q: "Our parents cried looking at the bridal portrait. That is the highest review we know how to give.",
-    a: "Prathama & Surajit · Bengali Wedding, Kolkata",
+    a: "Prathama & Surajit · Wedding, Kolkata",
   },
   {
     q: "He photographed our grandmothers laughing together. That single frame is the most loved photograph in our home.",
     a: "Arnab & Swagata · Reception, Kolkata",
+  },
+];
+
+/* The homepage exhibition: nine frames hung left to right. Order is chosen for
+ * rhythm (portrait / landscape / colour temperature), not chronology. */
+export const SELECTS = ["p06", "p05", "p13", "p17", "p03", "p01", "p24", "p12", "p20"];
+
+/* The manifesto, lit word by word on scroll. [id] tokens become small inline
+ * photographs set into the sentence. */
+export const MANIFESTO = {
+  text: "We don't direct your day. [p05] We follow it, quietly and closely, [p15] the way you'd want your grandmother [p25] to remember it.",
+  by: "Arnab Maity",
+  role: "Founder and lead photographer",
+};
+
+/* "A wedding day, as we follow it": six chapters most Indian weddings share,
+ * whatever the tradition. No fixed clock, because the muhurat moves every
+ * wedding. `sky` drives the section's background as you scroll through the day. */
+export const DAY = [
+  {
+    id: "haldi",
+    when: "Morning",
+    name: "Haldi",
+    text: "Turmeric, marigolds and every cousin within reach. It is the loosest hour of the whole wedding, and nobody stays clean for long.",
+    photo: "p14",
+    alt: "A bride laughing as turmeric water is poured over her",
+    sky: "#5B3A12",
+  },
+  {
+    id: "ready",
+    when: "Afternoon",
+    name: "Getting ready",
+    text: "Jewellery laid out on the bed, the dupatta pinned twice, a mother's hands at the last hook. We work with a long lens and a short voice.",
+    photo: "/photos/prathama-surajit-04.jpg",
+    alt: "A bride in red and gold, eyes lowered, smiling",
+    sky: "#4D2112",
+  },
+  {
+    id: "first-look",
+    when: "At the muhurat",
+    name: "The first look",
+    text: "Behind a veil, a garland or a pair of leaves, the moment two people see each other as bride and groom. It lasts a second. There is one chance.",
+    photo: "/photos/prathama-surajit-02.jpg",
+    alt: "A bride's eye glimpsed past a leaf held to her face",
+    sky: "#3F0F0D",
+  },
+  {
+    id: "vows",
+    when: "Evening",
+    name: "The vows",
+    text: "Pheras around the fire, a nikah, a church aisle: the minutes everything else orbits. The room goes quiet for these, and so do we.",
+    photo: "hero-veil",
+    alt: "A bride beneath a red veil in candlelight",
+    sky: "#2C0809",
+  },
+  {
+    id: "after-hours",
+    when: "Past midnight",
+    name: "After hours",
+    text: "The elders leave and the dancing starts properly. Flash off, ISO up. Some of our favourite frames are made after two in the morning.",
+    photo: "p02",
+    alt: "A couple close together in warm lamplight",
+    sky: "#120D18",
+  },
+  {
+    id: "reception",
+    when: "Days later",
+    name: "The reception",
+    text: "A different house, a different light, a thousand guests and the same two people. We stay until the last plate.",
+    photo: "/photos/arnab-swagata-02.jpg",
+    alt: "A couple under a canopy of roses and chandeliers at their reception",
+    sky: "#3A1A0E",
   },
 ];
 
@@ -301,7 +376,7 @@ export const FAQS = [
   },
   {
     q: "Do you travel outside Kolkata?",
-    a: "Happily. Bhubaneswar, Ranchi, Varanasi and beyond. Travel and stay are billed at actuals on top of the package; destination weddings get a custom quote.",
+    a: "That is most of the job. Bhubaneswar, Ranchi, Varanasi, Kashmir and anywhere else in India you are getting married. Travel and stay are billed at actuals; destination weddings get a custom quote.",
   },
   {
     q: "Do you share RAW files?",
@@ -315,10 +390,10 @@ export const FAQS = [
     q: "Can we customise a package?",
     a: "Yes. Most couples start from The Signature and add events, an album, or a film. Tell us the shape of your days and we will send an exact quote in 24 hours.",
   },
-  // {
-  //   q: "Do you photograph non-Bengali weddings?",
-  //   a: "Often. Marwari, Punjabi, Odia, Christian and court weddings so far. We arrive early, learn the rituals that matter to your family, and never interrupt one for a photo.",
-  // },
+  {
+    q: "Which traditions do you photograph?",
+    a: "All of them, gladly. Marwari, Punjabi, Odia, Christian, court weddings and more. We arrive early, learn the rituals that matter to your family, and never interrupt one for a photograph.",
+  },
 ];
 
 export const INSTA_PHOTOS = ["p04", "p13", "p07", "p20", "p24", "p12", "p02", "p22"];
@@ -327,6 +402,7 @@ export const INFO = {
   brand: "foreverknots",
   site: "https://foreverknots.studio",
   basedIn: "Kolkata, India",
+  reach: "Weddings across India",
   serves: ["Kolkata", "Bhubaneswar", "Ranchi", "Varanasi", "Kashmir"],
   yearsActive: 5,
   weddingsDone: 80,

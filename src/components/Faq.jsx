@@ -1,24 +1,30 @@
 import { useState } from 'react';
 import { m } from 'motion/react';
 import { FAQS, INFO } from '../data';
+import SplitWords from './SplitWords';
 import Reveal from './Reveal';
 import { waLink } from '../utils/whatsapp';
-import { EASE } from '../utils/motion';
+import { EXPO } from '../utils/motion';
 
-function FaqItem({ q, a, open, onToggle }) {
+function FaqItem({ q, a, open, onToggle, i }) {
+  const id = `faq-${i}`;
   return (
-    <div className={`faq-item ${open ? 'open' : ''}`}>
-      <button className="faq-item__q" aria-expanded={open} onClick={onToggle}>
-        <span>{q}</span>
-        <span className="faq-item__plus" aria-hidden="true">+</span>
-      </button>
+    <div className={`faq__item ${open ? 'is-open' : ''}`}>
+      <h3>
+        <button className="faq__q" aria-expanded={open} aria-controls={id} onClick={onToggle}>
+          <span className="faq__q-text">{q}</span>
+          <span className="faq__icon" aria-hidden="true"><i /><i /></span>
+        </button>
+      </h3>
       <m.div
-        className="faq-item__a"
+        id={id}
+        role="region"
+        className="faq__a"
         initial={false}
         animate={{ height: open ? 'auto' : 0, opacity: open ? 1 : 0 }}
-        transition={{ duration: 0.45, ease: EASE }}
+        transition={{ height: { duration: 0.8, ease: EXPO }, opacity: { duration: 0.5, delay: open ? 0.15 : 0 } }}
       >
-        <div className="faq-item__a-inner">{a}</div>
+        <p>{a}</p>
       </m.div>
     </div>
   );
@@ -28,14 +34,22 @@ export default function Faq() {
   const [openIdx, setOpenIdx] = useState(0);
 
   return (
-    <section id="faq" className="section">
-      <div className="wrap">
-        <div className="sec-head">
-          <Reveal className="sec-head__meta">
-            <div className="mono">Questions couples ask</div>
-            <h2 className="sec-head__title">
-              Before you <em>write to us</em>
-            </h2>
+    <section id="faq" className="faq section" data-tone="pearl" aria-labelledby="faq-title">
+      <div className="wrap faq__grid">
+        <div className="faq__side">
+          <SplitWords as="h2" id="faq-title" className="display t-3xl">
+            Before you write
+          </SplitWords>
+          <Reveal as="p" className="faq__aside" delay={0.1}>
+            Something we haven&rsquo;t covered?{' '}
+            <a
+              className="tlink tlink--on"
+              href={waLink(INFO.phone, 'Hi foreverknots! We have a question about our wedding photography.')}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Ask us on WhatsApp
+            </a>
           </Reveal>
         </div>
 
@@ -43,23 +57,13 @@ export default function Faq() {
           {FAQS.map((f, i) => (
             <FaqItem
               key={f.q}
+              i={i}
               q={f.q}
               a={f.a}
               open={openIdx === i}
               onToggle={() => setOpenIdx(openIdx === i ? null : i)}
             />
           ))}
-        </Reveal>
-
-        <Reveal as="p" className="faq__outro" delay={0.15}>
-          Something else on your mind?{' '}
-          <a
-            href={waLink(INFO.phone, 'Hi foreverknots! We have a question about our wedding photography.')}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Ask us on WhatsApp →
-          </a>
         </Reveal>
       </div>
     </section>

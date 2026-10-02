@@ -2,8 +2,9 @@ import { forwardRef } from 'react';
 import { m } from 'motion/react';
 import { fadeUp } from '../utils/motion';
 
-/* Scroll-in wrapper replacing the old .reveal / IntersectionObserver pattern.
- * `root` scopes in-view detection to a scrollable ancestor (story modal). */
+/* Scroll-in wrapper. `root` scopes in-view detection to a scrollable ancestor
+ * (the story modal). Used for blocks of reading text; display type uses
+ * SplitWords, photographs use Develop. */
 const Reveal = forwardRef(function Reveal(
   {
     as = 'div',
@@ -25,7 +26,7 @@ const Reveal = forwardRef(function Reveal(
       initial="hidden"
       whileInView="show"
       custom={delay}
-      viewport={{ once, margin: '-12% 0px -12% 0px', root }}
+      viewport={{ once, margin: '-10% 0px -10% 0px', root }}
       variants={variant}
       {...rest}
     >
