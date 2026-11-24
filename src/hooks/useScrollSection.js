@@ -1,18 +1,19 @@
 import { useState, useEffect } from 'react';
 
+const IDS = ['home', 'work', 'day', 'stories', 'about', 'voices', 'faq', 'contact'];
+
 export function useScrollSection() {
   const [scrolled, setScrolled] = useState(false);
   const [section, setSection] = useState('home');
 
   useEffect(() => {
-    const ids = ['home', 'work', 'stories', 'packages', 'about', 'voices', 'faq', 'contact'];
     const onScroll = () => {
       setScrolled(window.scrollY > 60);
       let active = 'home';
-      for (const id of ids) {
+      for (const id of IDS) {
         const el = document.getElementById(id);
         if (!el) continue;
-        if (el.getBoundingClientRect().top <= 140) active = id;
+        if (el.getBoundingClientRect().top <= window.innerHeight * 0.4) active = id;
       }
       setSection(active);
     };

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import { MotionConfig, LazyMotion, domMax, AnimatePresence } from 'motion/react';
 import { ReactLenis, useLenis } from 'lenis/react';
 import { Routes, Route, Outlet, Navigate, useLocation, useNavigate, useMatch } from 'react-router-dom';
@@ -6,20 +6,23 @@ import { STORIES } from './data';
 import Seo from './components/Seo';
 import Nav from './components/Nav';
 import Hero from './components/Hero';
-// import Marquee from './components/Marquee'; // parked: deciding what the strip should carry
-import Intro from './components/Intro';
-import Work from './components/Work';
-import Stories from './components/Stories';
-import Packages from './components/Packages';
-import About from './components/About';
+import Manifesto from './components/Manifesto';
+import Selects from './components/Selects';
+import WeddingDay from './components/WeddingDay';
+import Journal from './components/Journal';
+// import Packages from './components/Packages'; // parked: pricing is shared on enquiry
+import Studio from './components/Studio';
 import Voices from './components/Voices';
 import Faq from './components/Faq';
-import InstaStrip from './components/InstaStrip';
+import Feed from './components/Feed';
 import Contact from './components/Contact';
 import Foot from './components/Foot';
 import Preloader from './components/Preloader';
+import Cursor from './components/Cursor';
 import WhatsAppFloat from './components/WhatsAppFloat';
+import { TransitionProvider, useGo } from './components/Transition';
 import { usePrefersReducedMotion } from './hooks/usePrefersReducedMotion';
+import { useTone } from './hooks/useTone';
 
 // Code-split: the gallery route and the on-demand overlays leave the initial bundle.
 // Overlays mount on first open, then stay mounted so their internal AnimatePresence
@@ -29,19 +32,18 @@ const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const Lightbox = lazy(() => import('./components/Lightbox'));
 const StoryModal = lazy(() => import('./components/StoryModal'));
 
-function HomePage({ ready, openLightbox, openStory, jump }) {
+function HomePage({ ready, openLightbox, openStory }) {
   return (
     <main>
       <Hero ready={ready} />
-      {/* <Marquee /> */}
-      <Intro />
-      <Work openLightbox={openLightbox} />
-      <Stories openStory={openStory} />
-      {/* <Packages onJump={jump} /> */}
-      <About />
+      <Manifesto />
+      <Selects openLightbox={openLightbox} />
+      <WeddingDay />
+      <Journal openStory={openStory} />
+      <Studio />
       <Voices />
       <Faq />
-      <InstaStrip />
+      <Feed />
       <Contact />
       {/* /stories/:id nests here so the homepage never remounts under the overlay */}
       <Outlet />
@@ -49,10 +51,15 @@ function HomePage({ ready, openLightbox, openStory, jump }) {
   );
 }
 
+const pageOf = (pathname) =>
+  pathname.startsWith('/gallery') ? 'gallery' : pathname.startsWith('/privacy') ? 'privacy' : 'home';
+
 function Site({ reduced }) {
   const lenis = useLenis();
   const location = useLocation();
   const navigate = useNavigate();
+  const go = useGo();
+  useTone();
 
   const [booted, setBooted] = useState(() => {
     try { return !!sessionStorage.getItem('fk-seen'); } catch { return true; }
@@ -79,39 +86,62 @@ function Site({ reduced }) {
   const [storyMounted, setStoryMounted] = useState(false);
   useEffect(() => { if (story) setStoryMounted(true); }, [story]);
 
-  // Scroll to top when switching between the home page and a standalone page
-  const page = location.pathname.startsWith('/gallery')
-    ? 'gallery'
-    : location.pathname.startsWith('/privacy')
-      ? 'privacy'
-      : 'home';
-  useEffect(() => {
-    if (lenis) lenis.scrollTo(0, { immediate: true });
-    else window.scrollTo(0, 0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
+  const page = pageOf(location.pathname);
 
-  const scrollToId = useCallback((id) => {
+  const scrollToId = useCallback((id, immediate = false) => {
     const el = document.getElementById(id);
     if (!el) return;
-    if (lenis) lenis.scrollTo(el, { offset: -64, duration: 1.1 });
-    else el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (lenis) lenis.scrollTo(el, { offset: 0, duration: 1.6, immediate, force: true });
+    else el.scrollIntoView({ behavior: immediate ? 'auto' : 'smooth', block: 'start' });
   }, [lenis]);
+
+  const toTop = useCallback((immediate = false) => {
+    if (lenis) lenis.scrollTo(0, { immediate, duration: 1.6, force: true });
+    else window.scrollTo({ top: 0, behavior: immediate ? 'auto' : 'smooth' });
+  }, [lenis]);
+
+  /* Where to land after a navigation, decided once the new page has committed
+   * (layout effect: the DOM is there, the curtain is still down). Lenis only
+   * re-measures the document on a debounced resize, so it is told to now, or an
+   * immediate scroll would be clamped to the previous page's height. A second
+   * pass a frame later catches the exhibition wall, which sizes itself from a
+   * measurement of its own. A page change with no section goes to the top. */
+  const lastPage = useRef(page);
+  useLayoutEffect(() => {
+    const section = location.state?.section;
+    const pageChanged = lastPage.current !== page;
+    lastPage.current = page;
+    if (!section && !pageChanged) return undefined;
+    const land = () => {
+      lenis?.resize();
+      if (section) scrollToId(section, true);
+      else toTop(true);
+    };
+    land();
+    const raf = requestAnimationFrame(land);
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.key]);
 
   const jump = useCallback((id) => {
     if (story) {
       closeStory();
-      // wait for the panel's exit slide before scrolling
-      setTimeout(() => scrollToId(id), 550);
+      // wait for the panel to lift away before scrolling
+      setTimeout(() => scrollToId(id), 850);
       return;
     }
-    if (page === 'gallery') {
-      navigate('/');
-      setTimeout(() => scrollToId(id), 400);
+    if (page !== 'home') {
+      go('/', { section: id });
       return;
     }
-    scrollToId(id);
-  }, [story, page, closeStory, navigate, scrollToId]);
+    if (id === 'home') toTop();
+    else scrollToId(id);
+  }, [story, page, closeStory, go, scrollToId, toTop]);
+
+  const route = useCallback((to) => {
+    if (pageOf(to) === page && !story) { toTop(); return; }
+    go(to);
+  }, [go, page, story, toTop]);
 
   return (
     <>
@@ -119,10 +149,10 @@ function Site({ reduced }) {
         {showPreloader && <Preloader onDone={() => setBooted(true)} />}
       </AnimatePresence>
 
-      <Nav onJump={jump} />
+      <Nav onJump={jump} onRoute={route} ready={ready} />
 
       <Routes>
-        <Route path="/" element={<HomePage ready={ready} openLightbox={openLightbox} openStory={openStory} jump={jump} />}>
+        <Route path="/" element={<HomePage ready={ready} openLightbox={openLightbox} openStory={openStory} />}>
           <Route index element={null} />
           <Route path="stories/:id" element={null} />
         </Route>
@@ -145,9 +175,10 @@ function Site({ reduced }) {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
-      <Foot onJump={jump} />
+      <Foot onJump={jump} onRoute={route} onTop={() => toTop()} />
 
       <WhatsAppFloat />
+      <Cursor />
       <Seo />
       <div className="grain" aria-hidden="true" />
 
@@ -158,7 +189,7 @@ function Site({ reduced }) {
       )}
       {storyMounted && (
         <Suspense fallback={null}>
-          <StoryModal story={story} onClose={closeStory} openLightbox={openLightbox} />
+          <StoryModal story={story} onClose={closeStory} openLightbox={openLightbox} openStory={openStory} />
         </Suspense>
       )}
     </>
@@ -167,12 +198,16 @@ function Site({ reduced }) {
 
 export default function App() {
   const reduced = usePrefersReducedMotion();
-  const site = <Site reduced={reduced} />;
+  const site = (
+    <TransitionProvider reduced={reduced}>
+      <Site reduced={reduced} />
+    </TransitionProvider>
+  );
   return (
     <MotionConfig reducedMotion="user">
       <LazyMotion features={domMax} strict>
         {reduced ? site : (
-          <ReactLenis root options={{ lerp: 0.09, smoothWheel: true }}>
+          <ReactLenis root options={{ lerp: 0.085, smoothWheel: true }}>
             {site}
           </ReactLenis>
         )}

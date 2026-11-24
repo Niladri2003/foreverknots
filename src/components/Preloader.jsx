@@ -1,43 +1,59 @@
 import { useEffect } from 'react';
 import { m } from 'motion/react';
-import { LUXE } from '../utils/motion';
+import RingsMark from './RingsMark';
+import { EXPO, SILK } from '../utils/motion';
 
+const WORD = 'foreverknots';
+
+/* First visit only. The two rings are drawn on, the stone is set, the name
+ * rises letter by letter, and the garnet lifts away like a curtain onto the
+ * hero. (LCP does not wait on any of this; the boot image paints beneath.) */
 export default function Preloader({ onDone }) {
   useEffect(() => {
     try { sessionStorage.setItem('fk-seen', '1'); } catch { /* private mode */ }
-    // This preloader is now painting over the static boot cover (index.html),
+    // This preloader now paints over the static boot cover (index.html),
     // which hid the boot-hero image until here — safe to drop it.
     document.getElementById('boot-cover')?.remove();
-    // The word finishes rising at ~1.0s; dismiss right after so the intro reads
-    // without dead hold. (LCP no longer depends on this; the boot hero paints first.)
-    const t = setTimeout(onDone, 1100);
+    const t = setTimeout(onDone, 2100);
     return () => clearTimeout(t);
   }, [onDone]);
 
   return (
     <m.div
       className="preloader"
-      initial={{ clipPath: 'inset(0 0 0% 0)' }}
-      animate={{ clipPath: 'inset(0 0 0% 0)' }}
-      exit={{ clipPath: 'inset(0 0 100% 0)' }}
-      transition={{ duration: 0.7, ease: LUXE }}
+      initial={{ clipPath: 'inset(0% 0% 0% 0%)' }}
+      animate={{ clipPath: 'inset(0% 0% 0% 0%)' }}
+      exit={{ clipPath: 'inset(0% 0% 100% 0%)' }}
+      transition={{ duration: 1.15, ease: SILK }}
       aria-hidden="true"
     >
-      <div className="preloader__word mask">
-        <m.span
-          initial={{ y: '110%' }}
-          animate={{ y: 0 }}
-          transition={{ duration: 0.9, ease: LUXE, delay: 0.1 }}
-        >
-          forever<em>knots</em>
-        </m.span>
-      </div>
       <m.div
-        className="preloader__line"
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: 1 }}
-        transition={{ duration: 0.6, ease: 'easeInOut', delay: 0.65 }}
-      />
+        className="preloader__inner"
+        exit={{ y: -60, opacity: 0 }}
+        transition={{ duration: 0.9, ease: SILK }}
+      >
+        <RingsMark size={92} draw delay={0.1} className="preloader__mark" />
+        <div className="preloader__word">
+          {WORD.split('').map((ch, i) => (
+            <span className="rw" key={i}>
+              <m.span
+                className="rw__i"
+                initial={{ y: '110%' }}
+                animate={{ y: '0%' }}
+                transition={{ duration: 1.3, ease: EXPO, delay: 0.55 + i * 0.035 }}
+              >
+                {ch}
+              </m.span>
+            </span>
+          ))}
+        </div>
+        <m.div
+          className="preloader__rule"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 1.4, ease: EXPO, delay: 0.9 }}
+        />
+      </m.div>
     </m.div>
   );
 }

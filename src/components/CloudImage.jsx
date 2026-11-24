@@ -1,25 +1,29 @@
+import { forwardRef } from 'react';
 import { cld, srcSet } from '../utils/cloudinary';
 
-export default function CloudImage({
-  name,
-  alt = '',
-  widths = [480, 768, 1080, 1440, 1920],
-  sizes = '100vw',
-  ar,
-  fill = false,
-  q,
-  eager = false,
-  placeholder = true,
-  className,
-  style,
-  // Art direction: an alternate Cloudinary name served to narrow screens (a
-  // portrait crop of the same frame). Omitted → a plain <img>, unchanged.
-  portrait,
-  portraitOpts,
-  portraitWidths = [540, 768, 1080, 1350],
-  portraitMedia = '(max-width: 768px)',
-  ...rest
-}) {
+const CloudImage = forwardRef(function CloudImage(
+  {
+    name,
+    alt = '',
+    widths = [480, 768, 1080, 1440, 1920],
+    sizes = '100vw',
+    ar,
+    fill = false,
+    q,
+    eager = false,
+    placeholder = true,
+    className,
+    style,
+    // Art direction: an alternate Cloudinary name served to narrow screens (a
+    // portrait crop of the same frame). Omitted → a plain <img>, unchanged.
+    portrait,
+    portraitOpts,
+    portraitWidths = [540, 768, 1080, 1350],
+    portraitMedia = '(max-width: 768px)',
+    ...rest
+  },
+  ref,
+) {
   const opts = { ar, fill, q };
   // Passthrough assets (local /photos, absolute URLs) have no cheap blur variant.
   const passthrough = /^(https?:|\/)/.test(name);
@@ -33,6 +37,7 @@ export default function CloudImage({
     : undefined;
   const img = (
     <img
+      ref={ref}
       src={cld(name, { ...opts, w: widths[widths.length - 1] })}
       srcSet={srcSet(name, widths, opts)}
       sizes={sizes}
@@ -56,4 +61,6 @@ export default function CloudImage({
       {img}
     </picture>
   );
-}
+});
+
+export default CloudImage;

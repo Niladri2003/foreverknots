@@ -12,7 +12,7 @@ import { cld } from '../utils/cloudinary';
 
 const LOGO_URL = 'https://res.cloudinary.com/dvbnkndyc/image/upload/f_auto,q_auto/foreverknots/logo.png';
 const HOME_DESC =
-  'Forever Knots (foreverknots) — cinematic wedding photography out of Kolkata. Documentary, slow, and printed on paper. Pre-weddings, Bengali weddings and beyond. Tying knots since 2020.';
+  'Forever Knots (foreverknots) — cinematic wedding photography for Indian weddings, based in Kolkata and travelling across India. Documentary, unhurried, printed on paper. Tying knots since 2020.';
 
 const ogImage = (name) => cld(name, { w: 1200, fill: true, ar: '1.91:1' });
 
@@ -22,7 +22,7 @@ const business = {
   name: INFO.brand,
   alternateName: 'Forever Knots',
   description:
-    'Cinematic wedding photography studio out of Kolkata. Pre-weddings, Bengali weddings, candid rituals and heirloom albums. Tying knots since 2020.',
+    'Cinematic wedding photography studio based in Kolkata, photographing weddings across India. Pre-weddings, wedding days, candid rituals and heirloom albums. Tying knots since 2020.',
   url: INFO.site,
   email: INFO.email,
   telephone: `+${INFO.phone.replace(/\D/g, '')}`,
@@ -75,9 +75,9 @@ function metaFor(pathname, storyId) {
   }
   if (pathname.startsWith('/gallery')) {
     return {
-      title: 'The Gallery · foreverknots · Wedding Photography, Kolkata',
+      title: 'The Gallery · foreverknots · Wedding Photography across India',
       description:
-        'The full foreverknots archive: pre-weddings, Bengali weddings, candid rituals, portraits and details, from Kolkata to Kashmir.',
+        'The full foreverknots archive: pre-weddings, weddings, candid rituals, portraits and details, from Kolkata to Kashmir.',
       path: '/gallery',
       image: ogImage('hero-couple'),
     };
@@ -92,7 +92,7 @@ function metaFor(pathname, storyId) {
     };
   }
   return {
-    title: 'foreverknots · Wedding Photography, Kolkata',
+    title: 'foreverknots · Wedding Photography across India',
     description: HOME_DESC,
     path: '/',
     image: ogImage('hero-couple'),
